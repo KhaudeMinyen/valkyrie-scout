@@ -63,6 +63,7 @@ h1 { font-size:26px; line-height:1.15; font-weight:700; text-wrap:balance }
 .lbl.part::before { content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--fg); margin-right:5px; vertical-align:1px }
 .hint { position:absolute; left:10px; bottom:8px; font-size:11.5px; color:var(--fg3); pointer-events:none }
 .fallback { position:absolute; inset:0; display:grid; place-items:center; padding:24px; text-align:center; color:var(--fg2) }
+.fallback p + p { margin-top:8px }
 
 .bar { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center }
 .bar-group { display:flex; flex-wrap:wrap; gap:6px; align-items:center }
@@ -117,7 +118,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
         <canvas id="c" aria-label="Rotatable 3D model of the airframe"></canvas>
         <div class="labels" id="labels"></div>
         <div class="hint">Drag to rotate · scroll or pinch to zoom · right-drag / two fingers to pan</div>
-        <div class="fallback" id="fallback" hidden>The 3D view could not start in this browser. The numbers beside it are still correct.</div>
+        <div class="fallback" id="fallback" hidden></div>
       </div>
 
       <div class="bar">
@@ -226,7 +227,6 @@ p.small { font-size:13.5px; color:var(--fg2) }
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 (function () {
   var viewport = document.getElementById('viewport');
@@ -246,7 +246,14 @@ p.small { font-size:13.5px; color:var(--fg2) }
   }
   refreshStaticNumbers();
 
-  if (!window.THREE || !THREE.OrbitControls) { document.getElementById('fallback').hidden = false; wireUnitsOnly(); return; }
+  function fail(why) {
+    var fb = document.getElementById('fallback'); fb.textContent = '';
+    var d = document.createElement('div'), a = document.createElement('p'), b = document.createElement('p');
+    a.textContent = 'The 3D view could not start. The numbers beside it are still correct.';
+    b.className = 'small'; b.textContent = why; d.appendChild(a); d.appendChild(b); fb.appendChild(d);
+    fb.hidden = false; wireUnitsOnly();
+  }
+  if (!window.THREE) { fail('The 3D library did not load. cdnjs.cloudflare.com may be blocked on this network or by an extension. (code: no-three)'); return; }
   function wireUnitsOnly() {
     document.getElementById('units').addEventListener('click', function (e) {
       var b = e.target.closest('button'); if (!b) return;
@@ -291,18 +298,66 @@ p.small { font-size:13.5px; color:var(--fg2) }
   }
   function extrude(shape, depth) { return new THREE.ExtrudeGeometry(shape, { depth: depth, bevelEnabled: false, steps: 1 }); }
 
+  /* ---------- small orbit / pan / zoom control, no external script ---------- */
+  function OrbitLite(camera, el) {
+    var self = this, cbs = [], pts = [], sph = { r: 1, th: 0, ph: 1 };
+    this.target = new THREE.Vector3(); this.minDistance = 300; this.maxDistance = 9000;
+    this.addEventListener = function (t, f) { if (t === 'change') cbs.push(f); };
+    function emit() { for (var i = 0; i < cbs.length; i++) cbs[i](); }
+    function read() {
+      var o = camera.position.clone().sub(self.target);
+      sph.r = o.length() || 1; sph.th = Math.atan2(o.x, o.z); sph.ph = Math.acos(Math.max(-1, Math.min(1, o.y / sph.r)));
+    }
+    function write() {
+      sph.r = Math.max(self.minDistance, Math.min(self.maxDistance, sph.r));
+      sph.ph = Math.max(0.0005, Math.min(Math.PI - 0.0005, sph.ph));
+      var s = Math.sin(sph.ph) * sph.r;
+      camera.position.set(self.target.x + s * Math.sin(sph.th), self.target.y + Math.cos(sph.ph) * sph.r, self.target.z + s * Math.cos(sph.th));
+      camera.lookAt(self.target);
+    }
+    function pan(dx, dy) {
+      var k = 2 * sph.r * Math.tan(camera.fov * Math.PI / 360) / (el.clientHeight || 1);
+      var rt = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion), up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+      self.target.addScaledVector(rt, -dx * k).addScaledVector(up, dy * k);
+    }
+    function find(id) { for (var i = 0; i < pts.length; i++) if (pts[i].id === id) return pts[i]; return null; }
+    this.update = function () { read(); write(); };
+    el.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    el.addEventListener('pointerdown', function (e) {
+      try { el.setPointerCapture(e.pointerId); } catch (x) {}
+      read(); pts.push({ id: e.pointerId, x: e.clientX, y: e.clientY, pan: e.button === 2 || e.shiftKey || e.ctrlKey || e.metaKey });
+    });
+    el.addEventListener('pointermove', function (e) {
+      var p = find(e.pointerId); if (!p) return;
+      var dx = e.clientX - p.x, dy = e.clientY - p.y, h = el.clientHeight || 1;
+      if (pts.length === 1) {
+        if (p.pan) pan(dx, dy); else { sph.th -= 2 * Math.PI * dx / h; sph.ph -= 2 * Math.PI * dy / h; }
+      } else if (pts.length === 2) {
+        var q = pts[0] === p ? pts[1] : pts[0];
+        var d0 = Math.hypot(p.x - q.x, p.y - q.y), d1 = Math.hypot(e.clientX - q.x, e.clientY - q.y);
+        if (d0 > 0 && d1 > 0) sph.r *= d0 / d1;
+        pan(dx / 2, dy / 2);
+      }
+      p.x = e.clientX; p.y = e.clientY; write(); emit();
+    });
+    function up(e) { pts = pts.filter(function (p) { return p.id !== e.pointerId; }); }
+    el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+    el.addEventListener('wheel', function (e) { e.preventDefault(); read(); sph.r *= Math.exp(e.deltaY * 0.0012); write(); emit(); }, { passive: false });
+  }
+
   /* ---------- scene ---------- */
   var canvas = document.getElementById('c');
-  var renderer;
-  try { renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true }); }
-  catch (e) { document.getElementById('fallback').hidden = false; wireUnitsOnly(); return; }
+  var renderer, glErr;
+  [{ antialias: true, alpha: true }, { antialias: false, alpha: true }, { alpha: true }].some(function (o) {
+    try { o.canvas = canvas; renderer = new THREE.WebGLRenderer(o); return true; } catch (e) { glErr = e; return false; }
+  });
+  if (!renderer) { fail('This browser would not give the page a WebGL context. Hardware acceleration may be off, or WebGL is blocked by a privacy setting, remote desktop or managed browser. (code: no-webgl' + (glErr && glErr.message ? '; ' + glErr.message : '') + ')'); return; }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(30, 1, 20, 30000);
   var target = new THREE.Vector3(440, 75, 0);
-  var controls = new THREE.OrbitControls(camera, canvas);
+  var controls = new OrbitLite(camera, canvas);
   controls.target.copy(target);
-  controls.enableDamping = false;
   controls.minDistance = 300; controls.maxDistance = 9000;
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 0.72));
