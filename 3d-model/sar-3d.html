@@ -109,7 +109,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
       <div class="kicker">Open-source SAR platform · twin-boom pusher</div>
       <h1>SAR Plane 3D Overview</h1>
     </div>
-    <div class="rev">Rev 1.6 · 17 Nov 2026</div>
+    <div class="rev">Rev 1.7 · 17 Nov 2026</div>
   </header>
 
   <div class="layout">
@@ -228,7 +228,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
 
       <div class="card">
         <h2>Guessed for the drawing</h2>
-        <p class="small">Nothing in the blueprint or our notes fixes these yet, so they are placeholders: wing leading edge 210 mm from the nose, aileron 300 × 70, elevator 64 and rudder 35 deep, the shape of the spine fairing (starts 450 mm back, 40 wide), the 100 × 20 × 5 root plates and the layout of the magnet bars, the hatch outline, the tube-socket block on top of your holder plate (your file has only the two plates), and where each electronics box sits.</p>
+        <p class="small">Nothing in the blueprint or our notes fixes these yet, so they are placeholders: wing leading edge 210 mm from the nose, aileron 300 × 70, elevator 64 and rudder 35 deep, the shape of the spine fairing (starts 450 mm back, 40 wide, 2.4 mm flange), the motor can and prop adapter lengths (check them against your motor), the 100 × 20 × 5 root plates and the layout of the magnet bars, the hatch outline, the tube-socket block on top of your holder plate (your file has only the two plates), and where each electronics box sits.</p>
       </div>
     </aside>
   </div>
@@ -471,8 +471,10 @@ p.small { font-size:13.5px; color:var(--fg2) }
     s.moveTo(x0, P.fuseH); s.lineTo(x1, P.fuseH); s.lineTo(x1, yT);
     s.quadraticCurveTo(x0 + 0.6 * (x1 - x0), P.fuseH + 8, x0, P.fuseH);
     add(extrude(s, P.spineW), M.printed, 0, 0, -P.spineW / 2);
+    box(x1 - x0, 2.4, P.spineW + 16, M.printed, (x0 + x1) / 2, P.fuseH + 1.3, 0);   /* 2.4 mm base flange, 8 mm wider each side, epoxied to the roof */
   })();
-  tubeX(14, 30, M.elec, P.fuseL + 15, P.motorY, 0);
+  tubeX(14, 25, M.elec, P.fuseL + 22.5, P.motorY, 0);   /* motor can: sticks out about 25 mm behind the mount plate */
+  tubeX(8, 7, M.cf, propX - 0.5, P.motorY, 0);          /* prop adapter on the shaft, at the prop plane */
   var propGroup = new THREE.Group(); plane.add(propGroup);
   (function () {
     var disc = new THREE.Mesh(new THREE.CircleGeometry(P.propD / 2, 64), M.prop); disc.rotation.y = Math.PI / 2; disc.position.set(propX, P.motorY, 0); propGroup.add(disc);
@@ -556,8 +558,9 @@ p.small { font-size:13.5px; color:var(--fg2) }
     [V(holderX, P.fuseH + 22, 0), 'Socket block (placeholder, not in your file)'],
     [V(holderX, P.fuseH - P.wall - 4, 70), 'Backplate · 163 × 140 × 8'],
     [V(620, P.boomY, -boomZ), 'Boom · Ø10 CF tube'],
-    [V(P.fuseL + 15, P.motorY, 0), 'X2212 motor · 10×4.7 pusher'],
-    [V(570, P.fuseH + 20, 0), 'Printed spine fairing · 250 long, 40 wide'],
+    [V(P.fuseL + 22, P.motorY, 0), 'X2212 motor · 10×4.7 pusher'],
+    [V(propX, P.motorY + 14, 0), 'Prop adapter'],
+    [V(570, P.fuseH + 20, 0), 'Printed spine fairing · 250 long, 40 wide, 2.4 mm base flange'],
     [V(holderX, yMag - 16, half + 2.5), 'Root plate · 100 × 20 × 5, in the foam'],
     [V(holderX, yMag + 16, half - 2), 'Magnet bars · 2 per face, 4 per wing joint (X-ray foam)'],
     [V(140, 45, 0), 'Battery · 4S 5200'],
