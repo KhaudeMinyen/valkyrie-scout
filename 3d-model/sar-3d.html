@@ -8,7 +8,7 @@
   --accent:#c85a0a; --accent2:#1a6b3a; --border:#ccc9be; --warn:#b3261e;
   /* scene materials */
   --foam:#f2a9be; --ctrl:#d96f8f; --cf:#2a2a2e; --printed:#5d6372;
-  --elec:#2d7f8f; --batt:#d9a520; --edge:#5f4a50;
+  --elec:#2d7f8f; --batt:#d9a520; --edge:#5f4a50; --mag:#a9b0c0;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -17,7 +17,7 @@
     --fg:#f0ede4; --fg2:#b8b5aa; --fg3:#8a887e;
     --accent:#f0822e; --accent2:#3adb84; --border:#3a3730; --warn:#f2776d;
     --foam:#d98aa3; --ctrl:#b85575; --cf:#8b8d96; --printed:#6f7688;
-    --elec:#3fa6b9; --batt:#e0b23a; --edge:#f3dbe2;
+    --elec:#3fa6b9; --batt:#e0b23a; --edge:#f3dbe2; --mag:#c4cad8;
     color-scheme: dark;
   }
 }
@@ -26,7 +26,7 @@
   --fg:#f0ede4; --fg2:#b8b5aa; --fg3:#8a887e;
   --accent:#f0822e; --accent2:#3adb84; --border:#3a3730; --warn:#f2776d;
   --foam:#d98aa3; --ctrl:#b85575; --cf:#8b8d96; --printed:#6f7688;
-  --elec:#3fa6b9; --batt:#e0b23a; --edge:#f3dbe2;
+  --elec:#3fa6b9; --batt:#e0b23a; --edge:#f3dbe2; --mag:#c4cad8;
   color-scheme: dark;
 }
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
@@ -109,7 +109,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
       <div class="kicker">Open-source SAR platform · twin-boom pusher</div>
       <h1>SAR Plane 3D Overview</h1>
     </div>
-    <div class="rev">Rev 1.5 · 17 Nov 2026</div>
+    <div class="rev">Rev 1.6 · 17 Nov 2026</div>
   </header>
 
   <div class="layout">
@@ -162,6 +162,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
         <span><i style="background:var(--printed)"></i>Printed PETG-CF</span>
         <span><i style="background:var(--elec)"></i>Electronics</span>
         <span><i style="background:var(--batt)"></i>Battery</span>
+        <span><i style="background:var(--mag)"></i>Magnet bars</span>
       </div>
     </div>
 
@@ -185,15 +186,17 @@ p.small { font-size:13.5px; color:var(--fg2) }
         <h2>Check before you cut</h2>
         <ul class="checks">
           <li><strong>Your holder file has no tube sockets yet</strong>
-            <span>Both plates are 163 × 140 × 8 mm with two Ø5.5 holes each, so a Ø10 tube has nowhere to sit. The sockets need a block on top of the plate, about 28 mm tall at this wing height, drawn here as a grey placeholder. Both bolt holes are on one side of the plate, only 11 mm from a tube axis.</span></li>
+            <span>Both plates are 163 × 140 × 8 mm with two Ø5.5 holes each, so a Ø10 tube has nowhere to sit. The sockets need a block on top of the plate, about 28 mm tall at this wing height, drawn here as a grey placeholder. The magnet pockets go in this block's side faces. Both bolt holes are on one side of the plate, only 11 mm from a tube axis.</span></li>
           <li><strong>Backplate is wider than the fuselage inside</strong>
             <span>It is 140 mm wide and the inside of the fuselage is 120, so it runs into the 10 mm side walls. Trim it to about 118 mm or notch the walls.</span></li>
+          <li><strong>The wing is held on by magnets only, so measure the pull</strong>
+            <span>The tubes carry the lift; the magnets only stop the wing sliding out. Each wing joint has two 25.4 × 12.7 × 3.2 mm bars in a 5 mm root plate and two in the block face (8 bars in all). Clamp one wing joint to a luggage scale and aim for at least 2 kg of measured pull. The GPS/compass sits about 18 cm from the nearest bar here; keep at least 15 cm. Use a high-temperature grade (N42SH) if the plane will sit in a hot car.</span></li>
           <li class="ok"><strong>Boom spacing 325 clears the prop</strong>
             <span>The blueprint's 234 mm put the booms inside the 254 mm prop circle. At 325 each boom sits about 30 mm outside the blade tips.</span></li>
           <li class="ok"><strong>Tail volume now 0.38, up from 0.28</strong>
             <span>Stable beginner planes sit around 0.35–0.5. The 160 mm tail chord gets there, and the booms grew to 640 mm so the wider tail still sits behind the prop. The elevator is one 309 × 64 mm panel between the fins, driven by a servo at each end; the 95 mm stubs outboard of each fin stay fixed.</span></li>
           <li class="ok"><strong>Prop now sits 23 mm above the belly line</strong>
-            <span>The motor is raised to 150 mm on a printed pylon above the fuselage roof, so a belly landing hits foam first. A high thrust line pitches the nose down a little when you add throttle; ArduPlane trim or a degree or two of motor downthrust takes it out. The prop plane sits only 22 mm ahead of the tail, so keep that gap.</span></li>
+            <span>The motor is raised to 150 mm on a printed spine fairing that rises about 50 mm over 250 mm from the roof, so a belly landing hits foam first. A high thrust line pitches the nose down a little when you add throttle; ArduPlane trim or a degree or two of motor downthrust takes it out. The prop plane sits only 22 mm ahead of the tail, so keep that gap.</span></li>
           <li class="ok"><strong>CG target: 70–84 mm behind the leading edge</strong>
             <span>That is 25–30% of chord. Slide the battery fore and aft to hit it before the first flight.</span></li>
         </ul>
@@ -212,7 +215,8 @@ p.small { font-size:13.5px; color:var(--fg2) }
             <tr><td>Wing mount</td><td class="n">—</td><td class="n">bolt-on, roof</td><td class="src">Your holder</td></tr>
             <tr><td>Boom length</td><td class="n">400</td><td class="n">640</td><td class="src">Follows tail</td></tr>
             <tr><td>Boom spacing</td><td class="n">234</td><td class="n">325</td><td class="src">You</td></tr>
-            <tr><td>Prop centre height</td><td class="n">60 (guess)</td><td class="n">150, on pylon</td><td class="src">You</td></tr>
+            <tr><td>Prop centre height</td><td class="n">60 (guess)</td><td class="n">150, on spine fairing</td><td class="src">You</td></tr>
+            <tr><td>Wing retention</td><td class="n">bolts</td><td class="n">tubes + magnets</td><td class="src">You</td></tr>
             <tr><td>Tail chord</td><td class="n">120</td><td class="n">160</td><td class="src">You</td></tr>
             <tr><td>Elevator</td><td class="n">full 500</td><td class="n">309, between fins</td><td class="src">You</td></tr>
             <tr><td>Overall length</td><td class="n">1050</td><td class="n">920</td><td class="src">Follows</td></tr>
@@ -224,7 +228,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
 
       <div class="card">
         <h2>Guessed for the drawing</h2>
-        <p class="small">Nothing in the blueprint or our notes fixes these yet, so they are placeholders: wing leading edge 210 mm from the nose, aileron 300 × 70, elevator 64 and rudder 35 deep, the shape of the motor pylon, the hatch outline, the tube-socket block on top of your holder plate (your file has only the two plates), and where each electronics box sits.</p>
+        <p class="small">Nothing in the blueprint or our notes fixes these yet, so they are placeholders: wing leading edge 210 mm from the nose, aileron 300 × 70, elevator 64 and rudder 35 deep, the shape of the spine fairing (starts 450 mm back, 40 wide), the 100 × 20 × 5 root plates and the layout of the magnet bars, the hatch outline, the tube-socket block on top of your holder plate (your file has only the two plates), and where each electronics box sits.</p>
       </div>
     </aside>
   </div>
@@ -277,7 +281,8 @@ p.small { font-size:13.5px; color:var(--fg2) }
     boomX0: 280, boomL: 640, boomSpacing: 325, boomY: 120,
     htChord: 160, htSpan: 500, elevFrac: 0.6,
     finChord: 100, finH: 120, rudFrac: 0.65,
-    propD: 254, motorY: 150
+    propD: 254, motorY: 150,
+    spineX0: 450, spineW: 40
   };
   var half = P.fuseW / 2, tipZ = half + P.panel, TE = P.wingLE + P.chord;
   var boomEnd = P.boomX0 + P.boomL, boomZ = P.boomSpacing / 2;
@@ -371,7 +376,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
   var M = {
     foam: new THREE.MeshLambertMaterial(), ctrl: new THREE.MeshLambertMaterial(),
     cf: new THREE.MeshLambertMaterial(), printed: new THREE.MeshLambertMaterial(),
-    elec: new THREE.MeshLambertMaterial(), batt: new THREE.MeshLambertMaterial(),
+    elec: new THREE.MeshLambertMaterial(), batt: new THREE.MeshLambertMaterial(), mag: new THREE.MeshLambertMaterial(),
     hold: new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.5, depthWrite: false }),
     edge: new THREE.LineBasicMaterial({ transparent: true, opacity: 0.55 }),
     dimOv: new THREE.LineBasicMaterial({ depthTest: false, transparent: true }),
@@ -431,6 +436,16 @@ p.small { font-size:13.5px; color:var(--fg2) }
     tubeZ(5, tipZ, M.cf, xMain, yMain, s * tipZ / 2);   /* main spar, 700 */
     tubeZ(3, tipZ, M.cf, xRear, yRear, s * tipZ / 2);   /* rear spar, 700 */
   });
+
+  /* magnet joint: root plate recessed into each wing, two bars per face in the plate and two in the holder block */
+  var yMag = (yMain + yRear) / 2;
+  [1, -1].forEach(function (s) {
+    box(100, 20, 5, M.printed, holderX, yMag, s * (half + 2.5));                     /* root plate, in a recess in the foam */
+    [-1, 1].forEach(function (k) {
+      box(25.4, 12.7, 3.2, M.mag, holderX + k * 13.2, yMag, s * (half + 1.6));       /* wing-side bar */
+      box(25.4, 12.7, 3.2, M.mag, holderX + k * 13.2, yMag, s * (half - 1.6));       /* block-side bar */
+    });
+  });
   [1, -1].forEach(function (s) {
     tubeX(5, P.boomL, M.cf, P.boomX0 + P.boomL / 2, P.boomY, s * boomZ);
     box(30, 18, 22, M.printed, xMain, P.boomY + 2, s * boomZ);
@@ -450,7 +465,13 @@ p.small { font-size:13.5px; color:var(--fg2) }
   });
 
   /* motor, prop */
-  box(10, P.motorY + 20 - P.fuseH, 50, M.printed, P.fuseL + 5, P.fuseH + (P.motorY + 20 - P.fuseH) / 2, 0); /* printed motor pylon above the roof */
+  box(10, P.motorY + 20 - P.fuseH, 50, M.printed, P.fuseL + 5, P.fuseH + (P.motorY + 20 - P.fuseH) / 2, 0); /* motor mount plate, top of the spine */
+  (function () {   /* faired spine: rises from the roof behind the wing holder up to the motor mount */
+    var s = new THREE.Shape(), x0 = P.spineX0, x1 = P.fuseL, yT = P.motorY + 20;
+    s.moveTo(x0, P.fuseH); s.lineTo(x1, P.fuseH); s.lineTo(x1, yT);
+    s.quadraticCurveTo(x0 + 0.6 * (x1 - x0), P.fuseH + 8, x0, P.fuseH);
+    add(extrude(s, P.spineW), M.printed, 0, 0, -P.spineW / 2);
+  })();
   tubeX(14, 30, M.elec, P.fuseL + 15, P.motorY, 0);
   var propGroup = new THREE.Group(); plane.add(propGroup);
   (function () {
@@ -536,7 +557,9 @@ p.small { font-size:13.5px; color:var(--fg2) }
     [V(holderX, P.fuseH - P.wall - 4, 70), 'Backplate · 163 × 140 × 8'],
     [V(620, P.boomY, -boomZ), 'Boom · Ø10 CF tube'],
     [V(P.fuseL + 15, P.motorY, 0), 'X2212 motor · 10×4.7 pusher'],
-    [V(P.fuseL + 5, P.fuseH + 12, 0), 'Printed motor pylon'],
+    [V(570, P.fuseH + 20, 0), 'Printed spine fairing · 250 long, 40 wide'],
+    [V(holderX, yMag - 16, half + 2.5), 'Root plate · 100 × 20 × 5, in the foam'],
+    [V(holderX, yMag + 16, half - 2), 'Magnet bars · 2 per face, 4 per wing joint (X-ray foam)'],
     [V(140, 45, 0), 'Battery · 4S 5200'],
     [V(300, 25, 0), 'Flight controller'],
     [V(180, P.fuseH - 14, 0), 'GPS'],
@@ -556,7 +579,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
     var cs = getComputedStyle(document.documentElement);
     function c(n) { return cs.getPropertyValue(n).trim(); }
     M.foam.color.set(c('--foam')); M.ctrl.color.set(c('--ctrl')); M.cf.color.set(c('--cf')); M.printed.color.set(c('--printed'));
-    M.edge.opacity = cs.colorScheme === 'dark' || c('--bg') === '#131210' ? 0.38 : 0.55; M.elec.color.set(c('--elec')); M.batt.color.set(c('--batt')); M.hold.color.set(c('--printed')); M.edge.color.set(c('--edge'));
+    M.edge.opacity = cs.colorScheme === 'dark' || c('--bg') === '#131210' ? 0.38 : 0.55; M.elec.color.set(c('--elec')); M.batt.color.set(c('--batt')); M.hold.color.set(c('--printed')); M.mag.color.set(c('--mag')); M.edge.color.set(c('--edge'));
     M.dimOv.color.set(c('--accent')); M.dimSec.color.set(c('--accent2')); M.prop.color.set(c('--accent')); M.cg.color.set(c('--accent2'));
     requestRender();
   }
