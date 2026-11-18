@@ -3,7 +3,7 @@ An SAR fixed wing drone. Designed to be open-source, cheap, and reliable.
 
 A twin-boom pusher fixed-wing for search and rescue, built from XPS foam, carbon tube and printed PETG-CF, and flown with ArduPlane. This README is a plain-text summary so the design can be read at a glance on GitHub. The interactive 3D model and the full bill of materials live in the HTML files listed at the bottom: download one and open it in a browser.
 
-*Design revision 1.7 (3D model) · BOM revision 1.95 · November 2026*
+*Design revision 1.7 (3D model) · BOM revision 1.96 · November 2026*
 
 ## At a glance
 
@@ -87,9 +87,9 @@ Side view, nose left. The prop is the vertical bar behind the motor `M`.
 
 ## Bill of materials, phase 1 (flight-ready fixed wing)
 
-**Grand total: $798.** Prices are the unit prices in `bom/fw-bom.html` and are estimates.
+**Grand total: $829.** Prices are the unit prices in `bom/fw-bom.html` and are estimates.
 
-**Airframe** — $167
+**Airframe** — $175
 
 | Qty | Part | Unit | Ext | Source |
 |---|---|---|---|---|
@@ -103,6 +103,7 @@ Side view, nose left. The prop is the vertical bar behind the motor `M`.
 | 1 | BSI Foam-Cure CA Glue | $8 | $8 | Amazon |
 | 1 | BSI Insta-Set CA Accelerator | $6 | $6 | Amazon |
 | 1 | BSI Slow-Cure 30-min Epoxy (BSI-205, 4.5 oz) | $15 | $15 | Amazon |
+| 1 | J-B Weld ClearWeld 5-Minute Epoxy Syringe (25 mL) | $8.49 | $8 | Tractor Supply |
 | 1 kit | Hot-Wire Bow Kit (DIY) | $12 | $12 | Amazon |
 
 **Electronics** — $441
@@ -121,14 +122,14 @@ Side view, nose left. The prop is the vertical bar behind the motor `M`.
 | 1 | Pitot Tube Airspeed Sensor (Matek ASPD-7002) | $18 | $18 | GetFPV |
 | 1 | RunCam Thumb Pro (or similar nano cam) | $55 | $55 | GetFPV |
 
-**Power** — $127
+**Power** — $107
 
 | Qty | Part | Unit | Ext | Source |
 |---|---|---|---|---|
 | 1 | Tattu 4S 5200 mAh 35C LiPo — XT60 | $55.99 | $56 | Pyrodrone |
 | 2 | XT60 Connector Pair (M + F) | $3 | $6 | Amazon |
 | 1 | 14 AWG Silicone Wire (1 m red + 1 m black) | $10 | $10 | Amazon |
-| 1 | iSDT Q6 Pro LiPo Charger | $55 | $55 | GetFPV |
+| 1 | iSDT Q6 Retro LiPo Charger | $35 | $35 | GetFPV |
 
 **Printed parts** — $8
 
@@ -136,7 +137,7 @@ Side view, nose left. The prop is the vertical bar behind the motor `M`.
 |---|---|---|---|---|
 | ~250 g | Polymaker PETG-CF Filament (1 kg spool) | $30/kg | $8 | Polymaker |
 
-**Hardware** — $55
+**Hardware** — $98
 
 | Qty | Part | Unit | Ext | Source |
 |---|---|---|---|---|
@@ -150,23 +151,25 @@ Side view, nose left. The prop is the vertical bar behind the motor `M`.
 | 1 pack | Servo Horn / Arm Variety Pack (25-tooth) | $4 | $4 | Amazon |
 | 1 | Magnetic Prop Balancer | $8 | $8 | Amazon |
 | 1 | Battery Voltage Alarm (LiPo Buzzer) | $3 | $3 | Amazon |
+| 8 | Neodymium Block Magnet 1 × ½ × ⅛ in, N42SH (K&J BX082SH) | $4.10 | $33 | K&J Magnetics |
+| 1 bag | M2 / M4 Heat-Set Inserts + Hex Screws Assortment | $10 | $10 | Amazon |
 
 Notes:
 
 - The radio transmitter is a RadioMaster Pocket ELRS in this list ($96). Skip it if you already own an ELRS transmitter.
-- The charger ($55) and the camera ($55) are optional. Remove them for a basic build.
+- The charger ($35) and the camera ($55) are optional. Remove them for a basic build.
+- Printer requirements are not in the total: PETG-CF needs a hardened steel nozzle and an all-metal hotend. On an AnkerMake M5 that is the all-metal hotend set plus a 0.6 mm hardened steel nozzle.
 - Hot-wire bow: build it from scrap wood and nichrome if you have the materials.
 - The PETG-CF cost is pro-rated from $30/kg for about 250 g.
 - ArduPlane and Mission Planner are free.
 
 Phase 2, a QuadPlane VTOL add-on, would add about $165 (four lift motors and ESCs, props, outrigger brackets, and a 6S battery).
 
-### BOM changes decided but not yet applied
+### Prices to confirm before ordering
 
-- Swap the iSDT Q6 Pro charger for the Q6 Retro.
-- Add the 8 magnet bars (K&J BX082SH, 25.4 × 12.7 × 3.2 mm N42SH, about $4.10 each).
-- Add a 0.6 mm hardened nozzle, an all-metal hotend for the AnkerMake M5, and update the PETG-CF note (it still says 0.4 mm).
-- Add M2/M3/M4 heat-set inserts and hex screws for the holder, and foam-safe 5-minute epoxy for the spine and the root plates.
+- The iSDT Q6 Retro charger ($35) comes from earlier research and has not been rechecked.
+- The M2/M4 heat-set insert and hex screw assortment ($10) is an estimate.
+- The magnet bars ($4.10 each) and the epoxy ($8.49) were checked on the K&J Magnetics and Tractor Supply sites; stock was not confirmed.
 
 ## Files
 
