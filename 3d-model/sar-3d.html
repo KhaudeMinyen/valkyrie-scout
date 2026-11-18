@@ -1,0 +1,568 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>SAR Plane 3D Overview</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg:#f5f4f0; --bg2:#eceae3; --bg3:#e1dfd6;
+  --fg:#1a1916; --fg2:#4a4840; --fg3:#7a786e;
+  --accent:#c85a0a; --accent2:#1a6b3a; --border:#ccc9be; --warn:#b3261e;
+  /* scene materials */
+  --foam:#f2a9be; --ctrl:#d96f8f; --cf:#2a2a2e; --printed:#5d6372;
+  --elec:#2d7f8f; --batt:#d9a520; --edge:#5f4a50;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#131210; --bg2:#1e1c18; --bg3:#282420;
+    --fg:#f0ede4; --fg2:#b8b5aa; --fg3:#8a887e;
+    --accent:#f0822e; --accent2:#3adb84; --border:#3a3730; --warn:#f2776d;
+    --foam:#d98aa3; --ctrl:#b85575; --cf:#8b8d96; --printed:#6f7688;
+    --elec:#3fa6b9; --batt:#e0b23a; --edge:#f3dbe2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#131210; --bg2:#1e1c18; --bg3:#282420;
+  --fg:#f0ede4; --fg2:#b8b5aa; --fg3:#8a887e;
+  --accent:#f0822e; --accent2:#3adb84; --border:#3a3730; --warn:#f2776d;
+  --foam:#d98aa3; --ctrl:#b85575; --cf:#8b8d96; --printed:#6f7688;
+  --elec:#3fa6b9; --batt:#e0b23a; --edge:#f3dbe2;
+  color-scheme: dark;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+[hidden] { display:none !important }
+body {
+  font-family:'IBM Plex Sans',system-ui,sans-serif; font-size:15px; line-height:1.5;
+  background:var(--bg); color:var(--fg);
+  padding-block:24px 40px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.mono { font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace }
+.page { max-width:1280px; margin:0 auto; display:flex; flex-direction:column; gap:18px }
+
+header { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:10px 20px;
+  border-bottom:2px solid var(--fg); padding-bottom:12px }
+.kicker { font:600 11px/1.3 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--accent) }
+h1 { font-size:26px; line-height:1.15; font-weight:700; text-wrap:balance }
+.rev { font:600 12px 'IBM Plex Mono',ui-monospace,monospace; border:1px solid var(--border); padding:4px 9px; border-radius:3px; color:var(--fg2); white-space:nowrap }
+
+.layout { display:grid; grid-template-columns:minmax(0,1fr); gap:18px }
+@media (min-width:980px) { .layout { grid-template-columns:minmax(0,1fr) 340px; align-items:start } }
+
+.stage { display:flex; flex-direction:column; gap:10px; min-width:0 }
+.viewport { position:relative; height:clamp(340px, 64vh, 720px); border:1px solid var(--border); border-radius:6px;
+  background:var(--bg2); overflow:hidden; touch-action:none }
+.viewport canvas { display:block; width:100%; height:100% }
+.labels { position:absolute; inset:0; pointer-events:none; overflow:hidden }
+.lbl { position:absolute; left:0; top:0; white-space:nowrap; font:600 11px/1.2 'IBM Plex Mono',ui-monospace,monospace;
+  padding:2px 5px; border-radius:3px; background:var(--bg); border:1px solid currentColor; will-change:transform }
+.lbl.ov { color:var(--accent) }
+.lbl.sec { color:var(--accent2) }
+.lbl.part { color:var(--fg); border-color:var(--border); font-weight:400; font-family:'IBM Plex Sans',system-ui,sans-serif; font-size:11.5px }
+.lbl.part::before { content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--fg); margin-right:5px; vertical-align:1px }
+.hint { position:absolute; left:10px; bottom:8px; font-size:11.5px; color:var(--fg3); pointer-events:none }
+.fallback { position:absolute; inset:0; display:grid; place-items:center; padding:24px; text-align:center; color:var(--fg2) }
+
+.bar { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center }
+.bar-group { display:flex; flex-wrap:wrap; gap:6px; align-items:center }
+.bar-label { font:600 10.5px 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--fg3); margin-right:2px }
+button.chip { font:500 13px 'IBM Plex Sans',system-ui,sans-serif; color:var(--fg2); background:var(--bg); border:1px solid var(--border);
+  padding:6px 11px; border-radius:999px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; min-height:32px }
+button.chip:hover { border-color:var(--fg3) }
+button.chip:focus-visible { outline:2px solid var(--accent); outline-offset:2px }
+button.chip[aria-pressed="true"] { background:var(--fg); color:var(--bg); border-color:var(--fg) }
+button.chip .sw { width:9px; height:9px; border-radius:2px; background:var(--accent2) }
+button.chip .sw.ov { background:var(--accent) }
+.seg { display:inline-flex; border:1px solid var(--border); border-radius:999px; overflow:hidden }
+.seg button { font:500 13px 'IBM Plex Sans',system-ui,sans-serif; background:var(--bg); color:var(--fg2); border:0; padding:6px 12px; cursor:pointer; min-height:32px }
+.seg button + button { border-left:1px solid var(--border) }
+.seg button[aria-pressed="true"] { background:var(--fg); color:var(--bg) }
+.seg button:focus-visible { outline:2px solid var(--accent); outline-offset:-2px }
+
+aside { display:flex; flex-direction:column; gap:18px; min-width:0 }
+.card { border:1px solid var(--border); border-radius:6px; background:var(--bg); padding:14px 16px; display:flex; flex-direction:column; gap:10px }
+h2 { font:600 11px 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--fg3) }
+dl.nums { display:grid; grid-template-columns:1fr auto; gap:5px 12px; font-size:14px }
+dl.nums dt { color:var(--fg2) }
+dl.nums dd { font:600 13.5px 'IBM Plex Mono',ui-monospace,monospace; text-align:right; font-variant-numeric:tabular-nums }
+ul.checks { list-style:none; display:flex; flex-direction:column; gap:10px; font-size:14px }
+ul.checks li { padding-left:12px; border-left:3px solid var(--warn) }
+ul.checks li.ok { border-left-color:var(--accent2) }
+ul.checks strong { display:block; font-weight:600 }
+ul.checks span { color:var(--fg2) }
+.tbl-wrap { overflow-x:auto }
+table { border-collapse:collapse; width:100%; font-size:13.5px }
+th { text-align:left; font:600 10.5px 'IBM Plex Mono',ui-monospace,monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--fg3); padding:0 8px 5px 0 }
+td { padding:5px 8px 5px 0; border-top:1px solid var(--border); vertical-align:top }
+td.n { font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums }
+td.src { color:var(--fg3); font-size:12.5px }
+p.small { font-size:13.5px; color:var(--fg2) }
+.legend { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12.5px; color:var(--fg2) }
+.legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px }
+</style>
+
+<div class="page">
+  <header>
+    <div>
+      <div class="kicker">Open-source SAR platform · twin-boom pusher</div>
+      <h1>SAR Plane 3D Overview</h1>
+    </div>
+    <div class="rev">Rev 1.4 · 17 Nov 2026</div>
+  </header>
+
+  <div class="layout">
+    <div class="stage">
+      <div class="viewport" id="viewport">
+        <canvas id="c" aria-label="Rotatable 3D model of the airframe"></canvas>
+        <div class="labels" id="labels"></div>
+        <div class="hint">Drag to rotate · scroll or pinch to zoom · right-drag / two fingers to pan</div>
+        <div class="fallback" id="fallback" hidden>The 3D view could not start in this browser. The numbers beside it are still correct.</div>
+      </div>
+
+      <div class="bar">
+        <div class="bar-group" id="dimToggles">
+          <span class="bar-label">Dimensions</span>
+          <button class="chip" data-dim="ov" aria-pressed="true"><span class="sw ov"></span>Overall</button>
+          <button class="chip" data-dim="wing" aria-pressed="false"><span class="sw"></span>Wing</button>
+          <button class="chip" data-dim="fuse" aria-pressed="false"><span class="sw"></span>Fuselage</button>
+          <button class="chip" data-dim="tail" aria-pressed="false"><span class="sw"></span>Tail &amp; booms</button>
+        </div>
+        <div class="bar-group" id="showToggles">
+          <span class="bar-label">Show</span>
+          <button class="chip" data-show="names" aria-pressed="false">Part names</button>
+          <button class="chip" data-show="xray" aria-pressed="false">X-ray foam</button>
+          <button class="chip" data-show="prop" aria-pressed="true">Prop disc</button>
+          <button class="chip" data-show="cg" aria-pressed="true">CG range</button>
+        </div>
+      </div>
+      <div class="bar">
+        <div class="bar-group">
+          <span class="bar-label">View</span>
+          <div class="seg" id="views">
+            <button data-view="iso" aria-pressed="true">3D</button>
+            <button data-view="top" aria-pressed="false">Top</button>
+            <button data-view="side" aria-pressed="false">Side</button>
+            <button data-view="front" aria-pressed="false">Front</button>
+          </div>
+        </div>
+        <div class="bar-group">
+          <span class="bar-label">Units</span>
+          <div class="seg" id="units">
+            <button data-unit="mm" aria-pressed="true">mm</button>
+            <button data-unit="in" aria-pressed="false">inch</button>
+          </div>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--foam)"></i>XPS foam</span>
+        <span><i style="background:var(--ctrl)"></i>Control surfaces</span>
+        <span><i style="background:var(--cf)"></i>Carbon tube / rod</span>
+        <span><i style="background:var(--printed)"></i>Printed PETG-CF</span>
+        <span><i style="background:var(--elec)"></i>Electronics</span>
+        <span><i style="background:var(--batt)"></i>Battery</span>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <h2>Key numbers</h2>
+        <dl class="nums">
+          <dt>Wingspan</dt><dd data-mm="1400"></dd>
+          <dt>Overall length</dt><dd data-mm="920"></dd>
+          <dt>Wing chord (NACA 2412)</dt><dd data-mm="280"></dd>
+          <dt>Wing area</dt><dd>0.39 m²</dd>
+          <dt>Aspect ratio</dt><dd>5.0 : 1</dd>
+          <dt>Wing loading at 1.35 kg</dt><dd>~34 g/dm²</dd>
+          <dt>Fuselage inside width</dt><dd data-mm="120"></dd>
+          <dt>Prop tip to boom</dt><dd data-mm="30"></dd>
+          <dt>Prop above belly line</dt><dd data-mm="23"></dd>
+        </dl>
+      </div>
+
+      <div class="card">
+        <h2>Check before you cut</h2>
+        <ul class="checks">
+          <li class="ok"><strong>Boom spacing 325 clears the prop</strong>
+            <span>The blueprint's 234 mm put the booms inside the 254 mm prop circle. At 325 each boom sits about 30 mm outside the blade tips.</span></li>
+          <li class="ok"><strong>Tail volume now 0.38, up from 0.28</strong>
+            <span>Stable beginner planes sit around 0.35–0.5. The 160 mm tail chord gets there, and the booms grew to 640 mm so the wider tail still sits behind the prop. The elevator is one 309 × 64 mm panel between the fins, driven by a servo at each end; the 95 mm stubs outboard of each fin stay fixed.</span></li>
+          <li class="ok"><strong>Prop now sits 23 mm above the belly line</strong>
+            <span>The motor is raised to 150 mm on a printed pylon above the fuselage roof, so a belly landing hits foam first. A high thrust line pitches the nose down a little when you add throttle; ArduPlane trim or a degree or two of motor downthrust takes it out. The prop plane sits only 22 mm ahead of the tail, so keep that gap.</span></li>
+          <li class="ok"><strong>CG target: 70–84 mm behind the leading edge</strong>
+            <span>That is 25–30% of chord. Slide the battery fore and aft to hit it before the first flight.</span></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Changed since Blueprint Rev 1.1</h2>
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Was</th><th>Now</th><th>From</th></tr></thead>
+          <tbody>
+            <tr><td>Fuselage width</td><td class="n">150</td><td class="n">140</td><td class="src">You</td></tr>
+            <tr><td>Wall thickness</td><td class="n">25</td><td class="n">10</td><td class="src">You</td></tr>
+            <tr><td>Wingspan</td><td class="n">1410</td><td class="n">1400</td><td class="src">You</td></tr>
+            <tr><td>Wing spars</td><td class="n">150 stubs</td><td class="n">Ø10 + Ø6, full span</td><td class="src">BOM 1.93</td></tr>
+            <tr><td>Wing mount</td><td class="n">—</td><td class="n">bolt-on, roof</td><td class="src">Your holder</td></tr>
+            <tr><td>Boom length</td><td class="n">400</td><td class="n">640</td><td class="src">Follows tail</td></tr>
+            <tr><td>Boom spacing</td><td class="n">234</td><td class="n">325</td><td class="src">You</td></tr>
+            <tr><td>Prop centre height</td><td class="n">60 (guess)</td><td class="n">150, on pylon</td><td class="src">You</td></tr>
+            <tr><td>Tail chord</td><td class="n">120</td><td class="n">160</td><td class="src">You</td></tr>
+            <tr><td>Elevator</td><td class="n">full 500</td><td class="n">309, between fins</td><td class="src">You</td></tr>
+            <tr><td>Overall length</td><td class="n">1050</td><td class="n">920</td><td class="src">Follows</td></tr>
+            <tr><td>Camera pod</td><td class="n">nose</td><td class="n">none (v2)</td><td class="src">You</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Guessed for the drawing</h2>
+        <p class="small">Nothing in the blueprint or our notes fixes these yet, so they are placeholders: wing leading edge 210 mm from the nose, aileron 300 × 70, elevator 64 and rudder 35 deep, the shape of the motor pylon, the hatch outline, the shape of the centre section over your holder plate, and where each electronics box sits.</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+  var viewport = document.getElementById('viewport');
+  var labelsEl = document.getElementById('labels');
+  var state = { units: 'mm', dims: { ov: true, wing: false, fuse: false, tail: false }, names: false, xray: false, prop: true, cg: true };
+
+  /* ---------- units ---------- */
+  function u(mm) {
+    if (state.units === 'mm') return String(Math.round(mm));
+    var inch = mm / 25.4;
+    return (inch >= 10 ? inch.toFixed(1) : inch.toFixed(2)) + '″';
+  }
+  function refreshStaticNumbers() {
+    document.querySelectorAll('dd[data-mm]').forEach(function (dd) {
+      dd.textContent = u(+dd.dataset.mm) + (state.units === 'mm' ? ' mm' : '');
+    });
+  }
+  refreshStaticNumbers();
+
+  if (!window.THREE || !THREE.OrbitControls) { document.getElementById('fallback').hidden = false; wireUnitsOnly(); return; }
+  function wireUnitsOnly() {
+    document.getElementById('units').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      state.units = b.dataset.unit; setSeg('units', b); refreshStaticNumbers();
+    });
+  }
+  function setSeg(id, btn) {
+    document.querySelectorAll('#' + id + ' button').forEach(function (x) { x.setAttribute('aria-pressed', x === btn ? 'true' : 'false'); });
+  }
+
+  /* ---------- airframe parameters (mm). x = aft from nose, y = up from belly, z = right ---------- */
+  var P = {
+    fuseL: 700, fuseW: 140, fuseH: 120, wall: 10, noseL: 90,
+    chord: 280, panel: 630, wingLE: 210, wingY: 140,
+    sparMain: 0.28, sparRear: 0.68,
+    ailSpan: 300, ailInset: 30, ailFrac: 0.75,
+    boomX0: 280, boomL: 640, boomSpacing: 325, boomY: 120,
+    htChord: 160, htSpan: 500, elevFrac: 0.6,
+    finChord: 100, finH: 120, rudFrac: 0.65,
+    propD: 254, motorY: 150
+  };
+  var half = P.fuseW / 2, tipZ = half + P.panel, TE = P.wingLE + P.chord;
+  var boomEnd = P.boomX0 + P.boomL, boomZ = P.boomSpacing / 2;
+  var htLE = boomEnd - P.htChord, htY = P.boomY + 5 + 0.06 * P.htChord;
+  var finLE = boomEnd - P.finChord, finY0 = P.boomY + 5;
+  var propX = P.fuseL + 38;
+  var elevHalf = boomZ - 8; /* elevator stops short of each fin */
+
+  /* ---------- NACA 4-digit ---------- */
+  function nacaAt(code, x) {
+    var m = +code[0] / 100, p = +code[1] / 10, t = +code.slice(2) / 100;
+    var yt = 5 * t * (0.2969 * Math.sqrt(x) - 0.1260 * x - 0.3516 * x * x + 0.2843 * x * x * x - 0.1036 * x * x * x * x);
+    var yc = 0;
+    if (m > 0) yc = x < p ? m / (p * p) * (2 * p * x - x * x) : m / ((1 - p) * (1 - p)) * ((1 - 2 * p) + 2 * p * x - x * x);
+    return { up: yc + yt, lo: yc - yt, mid: yc };
+  }
+  function section(code, chord, f0, f1) {
+    var n = 36, pts = [], i, x, a;
+    for (i = 0; i <= n; i++) { x = f0 + (f1 - f0) * (1 - Math.cos(Math.PI * i / n)) / 2; a = nacaAt(code, x); pts.push(new THREE.Vector2(x * chord, a.up * chord)); }
+    for (i = n; i >= 0; i--) { x = f0 + (f1 - f0) * (1 - Math.cos(Math.PI * i / n)) / 2; a = nacaAt(code, x); pts.push(new THREE.Vector2(x * chord, a.lo * chord)); }
+    return new THREE.Shape(pts);
+  }
+  function extrude(shape, depth) { return new THREE.ExtrudeGeometry(shape, { depth: depth, bevelEnabled: false, steps: 1 }); }
+
+  /* ---------- scene ---------- */
+  var canvas = document.getElementById('c');
+  var renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true }); }
+  catch (e) { document.getElementById('fallback').hidden = false; wireUnitsOnly(); return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(30, 1, 20, 30000);
+  var target = new THREE.Vector3(440, 75, 0);
+  var controls = new THREE.OrbitControls(camera, canvas);
+  controls.target.copy(target);
+  controls.enableDamping = false;
+  controls.minDistance = 300; controls.maxDistance = 9000;
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 0.72));
+  var sun = new THREE.DirectionalLight(0xffffff, 0.38); sun.position.set(-500, 900, 700); scene.add(sun);
+
+  var M = {
+    foam: new THREE.MeshLambertMaterial(), ctrl: new THREE.MeshLambertMaterial(),
+    cf: new THREE.MeshLambertMaterial(), printed: new THREE.MeshLambertMaterial(),
+    elec: new THREE.MeshLambertMaterial(), batt: new THREE.MeshLambertMaterial(),
+    edge: new THREE.LineBasicMaterial({ transparent: true, opacity: 0.55 }),
+    dimOv: new THREE.LineBasicMaterial({ depthTest: false, transparent: true }),
+    dimSec: new THREE.LineBasicMaterial({ depthTest: false, transparent: true }),
+    prop: new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false }),
+    cg: new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.75, side: THREE.DoubleSide, depthTest: false })
+  };
+  var skin = [M.foam, M.ctrl];
+
+  var plane = new THREE.Group(); scene.add(plane);
+  function add(geo, mat, x, y, z, parent) {
+    var m = new THREE.Mesh(geo, mat); m.position.set(x || 0, y || 0, z || 0);
+    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 40), M.edge));
+    (parent || plane).add(m); return m;
+  }
+  function box(lx, hy, wz, mat, cx, cy, cz, parent) { return add(new THREE.BoxGeometry(lx, hy, wz), mat, cx, cy, cz, parent); }
+  function tubeX(r, len, mat, cx, cy, cz, parent) { var g = new THREE.CylinderGeometry(r, r, len, 20); g.rotateZ(Math.PI / 2); return add(g, mat, cx, cy, cz, parent); }
+  function tubeZ(r, len, mat, cx, cy, cz, parent) { var g = new THREE.CylinderGeometry(r, r, len, 20); g.rotateX(Math.PI / 2); return add(g, mat, cx, cy, cz, parent); }
+
+  /* fuselage: hollow box with 10 mm walls + rounded nose block + printed motor plate */
+  (function () {
+    var s = new THREE.Shape();
+    s.moveTo(-half, 0); s.lineTo(half, 0); s.lineTo(half, P.fuseH); s.lineTo(-half, P.fuseH); s.lineTo(-half, 0);
+    var h = new THREE.Path(), w = P.wall;
+    h.moveTo(-half + w, w); h.lineTo(-half + w, P.fuseH - w); h.lineTo(half - w, P.fuseH - w); h.lineTo(half - w, w); h.lineTo(-half + w, w);
+    s.holes.push(h);
+    var g = extrude(s, P.fuseL - P.noseL - 10); g.rotateY(Math.PI / 2);
+    add(g, M.foam, P.noseL, 0, 0);
+    var n = new THREE.Shape();
+    n.moveTo(P.noseL, P.fuseH); n.lineTo(50, P.fuseH); n.quadraticCurveTo(0, P.fuseH, 0, P.fuseH / 2);
+    n.quadraticCurveTo(0, 0, 50, 0); n.lineTo(P.noseL, 0); n.lineTo(P.noseL, P.fuseH);
+    add(extrude(n, P.fuseW), M.foam, 0, 0, -half);
+    box(10, P.fuseH, P.fuseW, M.printed, P.fuseL - 5, P.fuseH / 2, 0);
+    var hatch = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(60, P.fuseH + 0.5, -55), new THREE.Vector3(200, P.fuseH + 0.5, -55),
+      new THREE.Vector3(200, P.fuseH + 0.5, 55), new THREE.Vector3(60, P.fuseH + 0.5, 55)]), M.edge);
+    plane.add(hatch);
+  })();
+
+  /* wing: two foam panels with ailerons, printed centre section on the holder plate */
+  (function () {
+    var full = section('2412', P.chord, 0, 1), front = section('2412', P.chord, 0, P.ailFrac), ail = section('2412', P.chord, P.ailFrac, 1);
+    var a0 = tipZ - P.ailInset - P.ailSpan, a1 = tipZ - P.ailInset;
+    [1, -1].forEach(function (s) {
+      function seg(shape, z0, z1, mat) { add(extrude(shape, z1 - z0), mat, P.wingLE, P.wingY, s > 0 ? z0 : -z1); }
+      seg(full, half, a0, M.foam); seg(front, a0, a1, M.foam); seg(ail, a0, a1, M.ctrl); seg(full, a1, tipZ, M.foam);
+    });
+    add(extrude(full, P.fuseW), M.printed, P.wingLE, P.wingY, -half);
+    var mid = P.wingLE + (P.sparMain + P.sparRear) / 2 * P.chord;
+    box(163.4, 8, 140, M.printed, mid, P.fuseH + 4, 0);          /* wing holder plate */
+    box(163.4, 8, 120, M.printed, mid, P.fuseH - P.wall - 4, 0); /* backplate with inserts */
+  })();
+
+  /* spars, booms, clamps */
+  var xMain = P.wingLE + P.sparMain * P.chord, xRear = P.wingLE + P.sparRear * P.chord;
+  var yMain = P.wingY + nacaAt('2412', P.sparMain).mid * P.chord, yRear = P.wingY + nacaAt('2412', P.sparRear).mid * P.chord;
+  tubeZ(5, 2 * tipZ, M.cf, xMain, yMain, 0);
+  tubeZ(3, 2 * tipZ, M.cf, xRear, yRear, 0);
+  [1, -1].forEach(function (s) {
+    tubeX(5, P.boomL, M.cf, P.boomX0 + P.boomL / 2, P.boomY, s * boomZ);
+    box(30, 18, 22, M.printed, xMain, P.boomY + 2, s * boomZ);
+    box(30, 18, 22, M.printed, xRear, P.boomY + 2, s * boomZ);
+  });
+
+  /* tail: horizontal stabiliser + elevator, twin fins + rudders */
+  var stabFront = section('0012', P.htChord, 0, P.elevFrac), stabRear = section('0012', P.htChord, P.elevFrac, 1), stubSpan = P.htSpan / 2 - elevHalf;
+  add(extrude(stabFront, P.htSpan), M.foam, htLE, htY, -P.htSpan / 2);
+  add(extrude(stabRear, stubSpan), M.foam, htLE, htY, -P.htSpan / 2);   /* fixed stub, outboard of the fin */
+  add(extrude(stabRear, stubSpan), M.foam, htLE, htY, elevHalf);        /* fixed stub, outboard of the fin */
+  add(extrude(stabRear, 2 * elevHalf), M.ctrl, htLE, htY, -elevHalf);   /* elevator, between the fins */
+  [1, -1].forEach(function (s) {
+    var f = extrude(section('0009', P.finChord, 0, P.rudFrac), P.finH); f.rotateX(-Math.PI / 2);
+    var r = extrude(section('0009', P.finChord, P.rudFrac, 1), P.finH); r.rotateX(-Math.PI / 2);
+    add(f, M.foam, finLE, finY0, s * boomZ); add(r, M.ctrl, finLE, finY0, s * boomZ);
+  });
+
+  /* motor, prop */
+  box(10, P.motorY + 20 - P.fuseH, 50, M.printed, P.fuseL + 5, P.fuseH + (P.motorY + 20 - P.fuseH) / 2, 0); /* printed motor pylon above the roof */
+  tubeX(14, 30, M.elec, P.fuseL + 15, P.motorY, 0);
+  var propGroup = new THREE.Group(); plane.add(propGroup);
+  (function () {
+    var disc = new THREE.Mesh(new THREE.CircleGeometry(P.propD / 2, 64), M.prop); disc.rotation.y = Math.PI / 2; disc.position.set(propX, P.motorY, 0); propGroup.add(disc);
+    var pts = []; for (var i = 0; i <= 64; i++) { var a = i / 64 * Math.PI * 2; pts.push(new THREE.Vector3(propX, P.motorY + Math.cos(a) * P.propD / 2, Math.sin(a) * P.propD / 2)); }
+    propGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), M.dimOv));
+    var blade = box(3, P.propD, 20, M.cf, propX, P.motorY, 0, propGroup); blade.rotation.x = 0.5;
+  })();
+
+  /* electronics (placement illustrative) */
+  box(138, 35, 43, M.batt, 140, P.wall + 17.5, 0);      /* Tattu 4S 5200 */
+  box(52, 13, 32, M.elec, 300, P.wall + 6.5, 0);        /* F405 Wing */
+  box(20, 8, 20, M.elec, 180, P.fuseH - P.wall - 4, 0); /* GPS under hatch */
+  box(20, 6, 12, M.elec, 370, P.wall + 3, -35);         /* ELRS receiver */
+  box(35, 10, 22, M.elec, 370, P.wall + 5, 30);         /* LR24-F telemetry */
+  box(45, 8, 25, M.elec, 600, P.wall + 4, 0);           /* ESC */
+  [1, -1].forEach(function (s) {
+    box(29, 12, 23, M.elec, xRear - 22, P.wingY + 3, s * (tipZ - P.ailInset - P.ailSpan / 2)); /* aileron servo, in wing */
+    box(23, 29, 12, M.elec, 805, P.boomY - 14, s * (boomZ - 11));  /* elevator servo, inboard of the boom */
+    box(23, 29, 12, M.elec, 850, P.boomY - 14, s * (boomZ + 11));  /* rudder servo, outboard of the boom */
+  });
+
+  /* CG range band: 25-30 % chord */
+  var cgBand = new THREE.Mesh(new THREE.PlaneGeometry(0.05 * P.chord, 260), M.cg);
+  cgBand.rotation.x = -Math.PI / 2; cgBand.position.set(P.wingLE + 0.275 * P.chord, P.wingY + 26, 0); cgBand.renderOrder = 5; plane.add(cgBand);
+
+  /* ---------- dimensions + labels ---------- */
+  var V = function (x, y, z) { return new THREE.Vector3(x, y, z); };
+  var dimGroups = { ov: new THREE.Group(), wing: new THREE.Group(), fuse: new THREE.Group(), tail: new THREE.Group() };
+  Object.keys(dimGroups).forEach(function (k) { dimGroups[k].renderOrder = 10; scene.add(dimGroups[k]); });
+  var labels = [];
+  function label(kind, group, pos, text) {
+    var el = document.createElement('div'); el.className = 'lbl ' + kind; labelsEl.appendChild(el);
+    var L = { el: el, pos: pos, text: text, group: group }; labels.push(L); return L;
+  }
+  function dim(group, a, b, off, text, opt) {
+    opt = opt || {};
+    var mat = group === 'ov' ? M.dimOv : M.dimSec;
+    var a2 = a.clone().add(off), b2 = b.clone().add(off);
+    var over = off.lengthSq() > 0 ? off.clone().setLength(10) : V(0, 0, 0);
+    var oa = opt.fromA || a, ob = opt.fromB || b;
+    var pts = [a2, b2, oa, a2.clone().add(over), ob, b2.clone().add(over)];
+    var seg = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), mat); seg.renderOrder = 10;
+    dimGroups[group].add(seg);
+    label(group === 'ov' ? 'ov' : 'sec', group, a2.clone().lerp(b2, opt.t == null ? 0.5 : opt.t), text);
+  }
+  var wy = P.wingY, th = nacaAt('2412', 0.3);
+
+  /* overall */
+  dim('ov', V(P.wingLE, wy, -tipZ), V(P.wingLE, wy, tipZ), V(-120, 0, 0), function () { return 'SPAN ' + u(2 * tipZ); });
+  dim('ov', V(0, 0, 0), V(boomEnd, 0, 0), V(0, -115, 0), function () { return 'LENGTH ' + u(boomEnd); }, { fromA: V(0, P.fuseH / 2, 0), fromB: V(boomEnd, P.boomY, 0) });
+  dim('ov', V(P.wingLE, wy, tipZ), V(TE, wy, tipZ), V(0, 0, 60), function () { return 'CHORD ' + u(P.chord); });
+  /* wing */
+  dim('wing', V(P.wingLE, wy, half), V(P.wingLE, wy, tipZ), V(-50, 0, 0), function () { return 'PANEL ' + u(P.panel); });
+  dim('wing', V(P.wingLE, wy, -half), V(P.wingLE, wy, half), V(-50, 0, 0), function () { return u(P.fuseW); });
+  dim('wing', V(P.wingLE, wy, -tipZ), V(xMain, wy, -tipZ), V(0, 0, -45), function () { return 'MAIN SPAR Ø10 @ ' + u(xMain - P.wingLE); }, { t: 0 });
+  dim('wing', V(P.wingLE, wy, -tipZ), V(xRear, wy, -tipZ), V(0, 0, -100), function () { return 'REAR SPAR Ø6 @ ' + u(xRear - P.wingLE); }, { t: 1 });
+  dim('wing', V(TE, wy, tipZ - P.ailInset - P.ailSpan), V(TE, wy, tipZ - P.ailInset), V(50, 0, 0), function () { return 'AILERON ' + u(P.ailSpan) + ' × ' + u((1 - P.ailFrac) * P.chord); });
+  dim('wing', V(P.wingLE + 0.3 * P.chord, wy + th.lo * P.chord, tipZ), V(P.wingLE + 0.3 * P.chord, wy + th.up * P.chord, tipZ), V(0, 0, 25), function () { return 'THICK ' + u(0.12 * P.chord); }, { t: 1.6 });
+  /* fuselage */
+  dim('fuse', V(0, 0, -half), V(P.fuseL, 0, -half), V(0, -55, 0), function () { return 'FUSELAGE ' + u(P.fuseL); }, { t: 0.3 });
+  dim('fuse', V(0, P.fuseH / 2, -half), V(0, P.fuseH / 2, half), V(-55, 0, 0), function () { return 'WIDTH ' + u(P.fuseW) + ' · INSIDE ' + u(P.fuseW - 2 * P.wall); }, { fromA: V(P.noseL, P.fuseH / 2, -half), fromB: V(P.noseL, P.fuseH / 2, half) });
+  dim('fuse', V(P.noseL, 0, half), V(P.noseL, P.fuseH, half), V(0, 0, 55), function () { return 'HEIGHT ' + u(P.fuseH); });
+  dim('fuse', V(0, P.fuseH, 0), V(P.wingLE, P.fuseH, 0), V(0, 75, 0), function () { return 'NOSE→LE ' + u(P.wingLE); }, { fromA: V(0, P.fuseH / 2, 0), fromB: V(P.wingLE, wy, 0) });
+  label('sec', 'fuse', V(520, P.fuseH / 2, half), function () { return 'WALLS ' + u(P.wall); });
+  /* tail & booms */
+  dim('tail', V(P.boomX0, P.boomY, boomZ), V(boomEnd, P.boomY, boomZ), V(0, -60, 0), function () { return 'BOOM Ø10 × ' + u(P.boomL); });
+  dim('tail', V(boomEnd, P.boomY, -boomZ), V(boomEnd, P.boomY, boomZ), V(45, 0, 0), function () { return 'SPACING ' + u(P.boomSpacing); });
+  dim('tail', V(boomEnd, htY, -P.htSpan / 2), V(boomEnd, htY, P.htSpan / 2), V(100, 0, 0), function () { return 'H-TAIL ' + u(P.htSpan); });
+  dim('tail', V(htLE, htY, -P.htSpan / 2), V(boomEnd, htY, -P.htSpan / 2), V(0, 0, -45), function () { return u(P.htChord); });
+  dim('tail', V(boomEnd - 18, htY + 10, -elevHalf), V(boomEnd - 18, htY + 10, elevHalf), V(0, 75, 0), function () { return 'ELEVATOR ' + u(2 * elevHalf) + ' × ' + u((1 - P.elevFrac) * P.htChord); });
+  dim('tail', V(boomEnd, finY0, boomZ), V(boomEnd, finY0 + P.finH, boomZ), V(0, 0, 150), function () { return 'FIN ' + u(P.finH); });
+  dim('tail', V(finLE, finY0 + P.finH, -boomZ), V(boomEnd, finY0 + P.finH, -boomZ), V(0, 30, 0), function () { return u(P.finChord); });
+  dim('tail', V(propX, P.motorY - P.propD / 2, 0), V(propX, P.motorY + P.propD / 2, 0), V(0, 0, 0), function () { return 'PROP Ø' + u(P.propD); }, { t: 1.12 });
+
+  /* part names */
+  [
+    [V(xMain, yMain, -360), 'Main spar · Ø10 CF tube, 2 × 700'],
+    [V(xRear, yRear, -300), 'Rear spar · Ø6 CF rod, 2 × 700'],
+    [V(P.wingLE + 40, P.wingY + 15, 0), 'Centre section on wing holder plate'],
+    [V(620, P.boomY, -boomZ), 'Boom · Ø10 CF tube'],
+    [V(P.fuseL + 15, P.motorY, 0), 'X2212 motor · 10×4.7 pusher'],
+    [V(P.fuseL + 5, P.fuseH + 12, 0), 'Printed motor pylon'],
+    [V(140, 45, 0), 'Battery · 4S 5200'],
+    [V(300, 25, 0), 'Flight controller'],
+    [V(180, P.fuseH - 14, 0), 'GPS'],
+    [V(370, 20, 30), 'Telemetry + receiver'],
+    [V(600, 20, 0), 'ESC'],
+    [V(xRear - 22, P.wingY + 3, tipZ - P.ailInset - P.ailSpan / 2), 'Aileron servo, in wing'],
+    [V(805, P.boomY - 14, boomZ - 11), 'Elevator servo (one at each end)'],
+    [V(850, P.boomY - 14, -(boomZ + 11)), 'Rudder servo'],
+    [V(boomEnd - 30, htY, 0), 'Elevator, between the fins'],
+    [V(130, P.fuseH, 0), 'Hatch'],
+    [V(TE - 30, P.wingY + 10, -(tipZ - P.ailInset - P.ailSpan / 2)), 'Aileron (flaperon)']
+  ].forEach(function (p) { label('part', 'names', p[0], function () { return p[1]; }); });
+  var cgLabel = label('sec', 'cg', V(P.wingLE + 0.275 * P.chord, P.wingY + 26, 150), function () { return 'CG ' + u(0.25 * P.chord) + '–' + u(0.30 * P.chord) + ' behind LE'; });
+
+  /* ---------- theme ---------- */
+  function applyTheme() {
+    var cs = getComputedStyle(document.documentElement);
+    function c(n) { return cs.getPropertyValue(n).trim(); }
+    M.foam.color.set(c('--foam')); M.ctrl.color.set(c('--ctrl')); M.cf.color.set(c('--cf')); M.printed.color.set(c('--printed'));
+    M.edge.opacity = cs.colorScheme === 'dark' || c('--bg') === '#131210' ? 0.38 : 0.55; M.elec.color.set(c('--elec')); M.batt.color.set(c('--batt')); M.edge.color.set(c('--edge'));
+    M.dimOv.color.set(c('--accent')); M.dimSec.color.set(c('--accent2')); M.prop.color.set(c('--accent')); M.cg.color.set(c('--accent2'));
+    requestRender();
+  }
+
+  /* ---------- state -> scene ---------- */
+  function applyState() {
+    Object.keys(dimGroups).forEach(function (k) { dimGroups[k].visible = state.dims[k]; });
+    skin.forEach(function (m) { m.transparent = state.xray; m.opacity = state.xray ? 0.22 : 1; m.depthWrite = !state.xray; m.needsUpdate = true; });
+    propGroup.visible = state.prop; cgBand.visible = state.cg;
+    labels.forEach(function (L) {
+      var on = L.group === 'names' ? state.names : L.group === 'cg' ? state.cg : state.dims[L.group];
+      L.on = on; L.el.hidden = !on; if (on) L.el.textContent = L.text();
+    });
+    refreshStaticNumbers(); requestRender();
+  }
+
+  /* ---------- camera views ---------- */
+  function setView(name) {
+    var w = viewport.clientWidth, h = viewport.clientHeight, aspect = w / h;
+    var ext = { iso: [720, 480], top: [800, 650], side: [660, 300], front: [840, 300] }[name];
+    var tn = Math.tan(camera.fov * Math.PI / 360);
+    var D = Math.max(ext[1] / tn, ext[0] / (tn * aspect)) * 1.05;
+    var dir = { iso: V(-0.95, 0.72, 1.1), top: V(0.0005, 1, 0), side: V(0, 0.0001, 1), front: V(-1, 0.0001, 0) }[name].normalize();
+    controls.target.copy(target);
+    camera.position.copy(target).addScaledVector(dir, D);
+    controls.update(); requestRender();
+  }
+
+  /* ---------- render ---------- */
+  var pending = false, tmp = new THREE.Vector3();
+  function requestRender() { if (!pending) { pending = true; requestAnimationFrame(render); } }
+  function render() {
+    pending = false;
+    renderer.render(scene, camera);
+    var w = viewport.clientWidth, h = viewport.clientHeight;
+    for (var i = 0; i < labels.length; i++) {
+      var L = labels[i]; if (!L.on) continue;
+      tmp.copy(L.pos).project(camera);
+      if (tmp.z > 1 || tmp.z < -1) { L.el.style.visibility = 'hidden'; continue; }
+      L.el.style.visibility = 'visible';
+      L.el.style.transform = 'translate(-50%,-50%) translate(' + ((tmp.x + 1) / 2 * w).toFixed(1) + 'px,' + ((1 - tmp.y) / 2 * h).toFixed(1) + 'px)';
+    }
+  }
+  function resize() {
+    var w = viewport.clientWidth, h = viewport.clientHeight; if (!w || !h) return;
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); requestRender();
+  }
+  controls.addEventListener('change', requestRender);
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(viewport); else window.addEventListener('resize', resize);
+
+  /* ---------- controls wiring ---------- */
+  document.getElementById('dimToggles').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var k = b.dataset.dim; state.dims[k] = !state.dims[k]; b.setAttribute('aria-pressed', String(state.dims[k])); applyState();
+  });
+  document.getElementById('showToggles').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var k = b.dataset.show; state[k] = !state[k]; b.setAttribute('aria-pressed', String(state[k])); applyState();
+  });
+  document.getElementById('views').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; setSeg('views', b); setView(b.dataset.view);
+  });
+  document.getElementById('units').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; state.units = b.dataset.unit; setSeg('units', b); applyState();
+  });
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', applyTheme); else if (mq.addListener) mq.addListener(applyTheme);
+  }
+  new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  resize(); applyTheme(); applyState(); setView('iso');
+})();
+</script>
