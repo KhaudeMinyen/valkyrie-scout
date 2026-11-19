@@ -109,7 +109,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
       <div class="kicker">Open-source SAR platform · twin-boom pusher</div>
       <h1>SAR Plane 3D Overview</h1>
     </div>
-    <div class="rev">Rev 1.7 · 17 Nov 2026</div>
+    <div class="rev">Rev 1.8 · 18 Nov 2026</div>
   </header>
 
   <div class="layout">
@@ -186,7 +186,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
         <h2>Check before you cut</h2>
         <ul class="checks">
           <li><strong>Your holder file has no tube sockets yet</strong>
-            <span>Both plates are 163 × 140 × 8 mm with two Ø5.5 holes each, so a Ø10 tube has nowhere to sit. The sockets need a block on top of the plate, about 28 mm tall at this wing height, drawn here as a grey placeholder. The magnet pockets go in this block's side faces. Both bolt holes are on one side of the plate, only 11 mm from a tube axis.</span></li>
+            <span>Both plates are 163 × 140 × 8 mm with two Ø5.5 holes each, so a Ø10 tube has nowhere to sit. The sockets need a block on top of the plate, about 28 mm tall at this wing height, drawn here as a grey placeholder with your 10 mm centre stopper, so each socket is 65 mm deep. Make the sockets 66–67 mm deep, or cut the spars 1–2 mm short, so the wing root meets the block before the tube bottoms out. The magnet pockets go in this block's side faces. Both bolt holes are on one side of the plate, only 11 mm from a tube axis.</span></li>
           <li><strong>Backplate is wider than the fuselage inside</strong>
             <span>It is 140 mm wide and the inside of the fuselage is 120, so it runs into the 10 mm side walls. Trim it to about 118 mm or notch the walls.</span></li>
           <li><strong>The wing is held on by magnets only, so measure the pull</strong>
@@ -211,7 +211,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
             <tr><td>Fuselage width</td><td class="n">150</td><td class="n">140</td><td class="src">You</td></tr>
             <tr><td>Wall thickness</td><td class="n">25</td><td class="n">10</td><td class="src">You</td></tr>
             <tr><td>Wingspan</td><td class="n">1410</td><td class="n">1400</td><td class="src">You</td></tr>
-            <tr><td>Wing spars</td><td class="n">150 stubs</td><td class="n">4 pieces, 700 each</td><td class="src">You</td></tr>
+            <tr><td>Wing spars</td><td class="n">150 stubs</td><td class="n">4 pieces, 695 each</td><td class="src">You</td></tr>
             <tr><td>Wing mount</td><td class="n">—</td><td class="n">bolt-on, roof</td><td class="src">Your holder</td></tr>
             <tr><td>Boom length</td><td class="n">400</td><td class="n">640</td><td class="src">Follows tail</td></tr>
             <tr><td>Boom spacing</td><td class="n">234</td><td class="n">325</td><td class="src">You</td></tr>
@@ -282,7 +282,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
     htChord: 160, htSpan: 500, elevFrac: 0.6,
     finChord: 100, finH: 120, rudFrac: 0.65,
     propD: 254, motorY: 150,
-    spineX0: 450, spineW: 40
+    spineX0: 450, spineW: 40, stopT: 10
   };
   var half = P.fuseW / 2, tipZ = half + P.panel, TE = P.wingLE + P.chord;
   var boomEnd = P.boomX0 + P.boomL, boomZ = P.boomSpacing / 2;
@@ -427,14 +427,15 @@ p.small { font-size:13.5px; color:var(--fg2) }
     box(163.4, 8, 140, M.printed, holderX, P.fuseH + 4, 0);             /* holder plate, from your file */
     box(163.4, 28, 140, M.hold, holderX, P.fuseH + 8 + 14, 0);          /* tube-socket block: placeholder, not in your file */
     box(163.5, 8, 140, M.printed, holderX, P.fuseH - P.wall - 4, 0);    /* backplate, from your file */
+    box(163.4, 28, P.stopT, M.printed, holderX, P.fuseH + 8 + 14, 0);   /* centre stopper, 10 mm, splits the sockets 65 + 65 */
   })();
 
   /* spars, booms, clamps */
   var xMain = P.wingLE + P.sparMain * P.chord, xRear = P.wingLE + P.sparRear * P.chord;
   var yMain = P.wingY + nacaAt('2412', P.sparMain).mid * P.chord, yRear = P.wingY + nacaAt('2412', P.sparRear).mid * P.chord;
   [1, -1].forEach(function (s) {
-    tubeZ(5, tipZ, M.cf, xMain, yMain, s * tipZ / 2);   /* main spar, 700 */
-    tubeZ(3, tipZ, M.cf, xRear, yRear, s * tipZ / 2);   /* rear spar, 700 */
+    tubeZ(5, tipZ - P.stopT / 2, M.cf, xMain, yMain, s * (tipZ + P.stopT / 2) / 2);   /* main spar, 695 */
+    tubeZ(3, tipZ - P.stopT / 2, M.cf, xRear, yRear, s * (tipZ + P.stopT / 2) / 2);   /* rear spar, 695 */
   });
 
   /* magnet joint: root plate recessed into each wing, two bars per face in the plate and two in the holder block */
@@ -531,7 +532,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
   dim('wing', V(P.wingLE, wy, -half), V(P.wingLE, wy, half), V(-50, 0, 0), function () { return u(P.fuseW); });
   dim('wing', V(P.wingLE, wy, -tipZ), V(xMain, wy, -tipZ), V(0, 0, -45), function () { return 'MAIN SPAR Ø10 @ ' + u(xMain - P.wingLE); }, { t: 0 });
   dim('wing', V(P.wingLE, wy, -tipZ), V(xRear, wy, -tipZ), V(0, 0, -100), function () { return 'REAR SPAR Ø6 @ ' + u(xRear - P.wingLE); }, { t: 1 });
-  dim('wing', V(xRear, yRear, 0), V(xRear, yRear, tipZ), V(0, 45, 0), function () { return 'EACH SPAR ' + u(tipZ) + ' = ' + u(P.panel) + ' IN WING + ' + u(half) + ' IN HOLDER'; });
+  dim('wing', V(xRear, yRear, P.stopT / 2), V(xRear, yRear, tipZ), V(0, 45, 0), function () { return 'EACH SPAR ' + u(tipZ - P.stopT / 2) + ' = ' + u(P.panel) + ' IN WING + ' + u(half - P.stopT / 2) + ' IN HOLDER'; });
   dim('wing', V(TE, wy, tipZ - P.ailInset - P.ailSpan), V(TE, wy, tipZ - P.ailInset), V(50, 0, 0), function () { return 'AILERON ' + u(P.ailSpan) + ' × ' + u((1 - P.ailFrac) * P.chord); });
   dim('wing', V(P.wingLE + 0.3 * P.chord, wy + th.lo * P.chord, tipZ), V(P.wingLE + 0.3 * P.chord, wy + th.up * P.chord, tipZ), V(0, 0, 25), function () { return 'THICK ' + u(0.12 * P.chord); }, { t: 1.6 });
   /* fuselage */
@@ -552,10 +553,11 @@ p.small { font-size:13.5px; color:var(--fg2) }
 
   /* part names */
   [
-    [V(xMain, yMain, -360), 'Main spar · Ø10 CF tube, 2 × 700'],
-    [V(xRear, yRear, -300), 'Rear spar · Ø6 CF rod, 2 × 700'],
+    [V(xMain, yMain, -360), 'Main spar · Ø10 CF tube, 2 × 695'],
+    [V(xRear, yRear, -300), 'Rear spar · Ø6 CF rod, 2 × 695'],
     [V(holderX, P.fuseH + 4, -70), 'Holder plate · 163 × 140 × 8'],
     [V(holderX, P.fuseH + 22, 0), 'Socket block (placeholder, not in your file)'],
+    [V(holderX + 60, P.fuseH + 36, 0), 'Centre stopper · 10 thick, sockets 65 deep'],
     [V(holderX, P.fuseH - P.wall - 4, 70), 'Backplate · 163 × 140 × 8'],
     [V(620, P.boomY, -boomZ), 'Boom · Ø10 CF tube'],
     [V(P.fuseL + 22, P.motorY, 0), 'X2212 motor · 10×4.7 pusher'],

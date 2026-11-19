@@ -3,7 +3,7 @@ An SAR fixed wing drone. Designed to be open-source, cheap, and reliable.
 
 A twin-boom pusher fixed-wing for search and rescue, built from XPS foam, carbon tube and printed PETG-CF, and flown with ArduPlane. This README is a plain-text summary so the design can be read at a glance on GitHub. The interactive 3D model and the full bill of materials live in the HTML files listed at the bottom: download one and open it in a browser.
 
-*Design revision 1.7 (3D model) · BOM revision 1.96 · November 2026*
+*Design revision 1.8 (3D model) · BOM revision 1.97 · November 2026*
 
 ## At a glance
 
@@ -69,7 +69,7 @@ Side view, nose left. The prop is the vertical bar behind the motor `M`.
 ## How it goes together
 
 - **Wing:** two separate 630 mm XPS foam panels, joined at the fuselage. Ailerons are 300 × 70 mm. The wing leading edge sits 210 mm back from the nose.
-- **Spars:** four carbon pieces cut from 1 m stock, 700 mm each. Per wing, one Ø10 tube at 28% chord and one Ø6 rod at 68% chord. Each runs 630 mm in the wing and 70 mm into the holder, and is glued into its wing.
+- **Spars:** four carbon pieces cut from 1 m stock, 695 mm each. Per wing, one Ø10 tube at 28% chord and one Ø6 rod at 68% chord. Each runs 630 mm in the wing and 65 mm into the holder, and is glued into its wing. A 10 mm stopper in the middle of the holder splits the two sockets 65 mm + 65 mm.
 - **Wing mount:** a printed holder on the fuselage roof: wing attachment plate, fuselage roof and backplate, bolted through with M4 heat-set inserts.
 - **Wing retention (planned):** magnets. Each wing root has a 100 × 20 × 5 mm printed plate recessed into the foam with two bars, and the holder block has two matching bars on each side face. The tubes carry the lift and the magnets only stop the wing sliding out.
 - **Motor:** mounted on a printed spine fairing epoxied to the fuselage roof. The spine starts 450 mm behind the nose, is 40 mm wide with a 2.4 mm base flange, and rises about 50 mm to the motor mount plate at the end of the fuselage.
