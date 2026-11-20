@@ -109,7 +109,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
       <div class="kicker">Open-source SAR platform · twin-boom pusher</div>
       <h1>SAR Plane 3D Overview</h1>
     </div>
-    <div class="rev">Rev 1.8 · 18 Nov 2026</div>
+    <div class="rev">Rev 1.9 · 20 Nov 2026</div>
   </header>
 
   <div class="layout">
@@ -185,16 +185,22 @@ p.small { font-size:13.5px; color:var(--fg2) }
       <div class="card">
         <h2>Check before you cut</h2>
         <ul class="checks">
-          <li><strong>Your holder file has no tube sockets yet</strong>
-            <span>Both plates are 163 × 140 × 8 mm with two Ø5.5 holes each, so a Ø10 tube has nowhere to sit. The sockets need a block on top of the plate, about 28 mm tall at this wing height, drawn here as a grey placeholder with your 10 mm centre stopper, so each socket is 65 mm deep. Make the sockets 66–67 mm deep, or cut the spars 1–2 mm short, so the wing root meets the block before the tube bottoms out. The magnet pockets go in this block's side faces. Both bolt holes are on one side of the plate, only 11 mm from a tube axis.</span></li>
-          <li><strong>Backplate is wider than the fuselage inside</strong>
-            <span>It is 140 mm wide and the inside of the fuselage is 120, so it runs into the 10 mm side walls. Trim it to about 118 mm or notch the walls.</span></li>
+          <li><strong>The three printed parts are solid in the CAD, about 0.9–1 kg</strong>
+            <span>The wing attach body is 1085 cm³, the holder plate 362 and the anchor 310. Even at 15% infill that is roughly 430 + 260 + 220 g by my rough estimate, against a planned 1.35 kg for the whole plane. Slice them and read the real filament weight. Hollow the wing attach body, and thin the plates or cut lightening holes.</span></li>
+          <li><strong>Holes have almost no clearance</strong>
+            <span>The sockets are Ø10.04 and Ø6.04 for Ø10 and Ø6 carbon, so use about Ø10.25 and Ø6.25. The wing attach bolt holes are Ø4.0 for M4, so use about 4.4. The magnet slot is 60.0 × 10.0 × 3.08, so open it to about 60.3 × 10.3 × 3.2.</span></li>
+          <li><strong>Boom front end moved with the main spar</strong>
+            <span>The Ø10 spar socket is now 45 mm behind the leading edge (16% chord), 33 mm further forward than before. The booms bond to the wing at the spars, so they now start at 245 mm and are 675 mm long (were 280 and 640). The rear Ø6 spar is still at 190 mm (68%). Confirm that is what you want.</span></li>
+          <li><strong>The plates cover the roof from 185 mm back</strong>
+            <span>The holder and anchor plates run from 185 to 509 mm behind the nose. The battery hatch in this drawing now ends at 180 mm; the battery is 138 mm long, so decide where it is loaded from.</span></li>
           <li><strong>The wing is held on by magnets only, so measure the pull</strong>
-            <span>The tubes carry the lift; the magnets only stop the wing sliding out. Each wing joint has two 25.4 × 12.7 × 3.2 mm bars in a 5 mm root plate and two in the block face (8 bars in all). Clamp one wing joint to a luggage scale and aim for at least 2 kg of measured pull. The GPS/compass sits about 18 cm from the nearest bar here; keep at least 15 cm. Use a high-temperature grade (N42SH) if the plane will sit in a hot car.</span></li>
+            <span>The tubes carry the lift; the magnets only stop the wing sliding out. Each wing joint has one 60 × 10 × 3 mm bar in a 5 mm root plate and one in the slot in the attach body (4 bars in all). Clamp one joint to a luggage scale and aim for at least 2 kg of pull. The GPS/compass sits about 15 cm from the nearest bar here; do not go closer. The 60 × 10 × 3 mm bars on the BOM are standard N35, so keep the plane out of hot cars.</span></li>
+          <li class="ok"><strong>Stopper, bolts and anchor look right</strong>
+            <span>The 10 mm stopper gives 65 mm sockets each side for the 695 mm spars. Four M4 bolts (250 × 100 mm apart, M4 × 30) go through the wing attach body, holder, roof and anchor. The anchor is 120 mm wide, the same as the fuselage inside, so make it about 118.</span></li>
           <li class="ok"><strong>Boom spacing 325 clears the prop</strong>
             <span>The blueprint's 234 mm put the booms inside the 254 mm prop circle. At 325 each boom sits about 30 mm outside the blade tips.</span></li>
           <li class="ok"><strong>Tail volume now 0.38, up from 0.28</strong>
-            <span>Stable beginner planes sit around 0.35–0.5. The 160 mm tail chord gets there, and the booms grew to 640 mm so the wider tail still sits behind the prop. The elevator is one 309 × 64 mm panel between the fins, driven by a servo at each end; the 95 mm stubs outboard of each fin stay fixed.</span></li>
+            <span>Stable beginner planes sit around 0.35–0.5. The 160 mm tail chord gets there, and the booms are 675 mm so the wider tail still sits behind the prop. The elevator is one 309 × 64 mm panel between the fins, driven by a servo at each end; the 95 mm stubs outboard of each fin stay fixed.</span></li>
           <li class="ok"><strong>Prop now sits 23 mm above the belly line</strong>
             <span>The motor is raised to 150 mm on a printed spine fairing that rises about 50 mm over 250 mm from the roof, so a belly landing hits foam first. A high thrust line pitches the nose down a little when you add throttle; ArduPlane trim or a degree or two of motor downthrust takes it out. The prop plane sits only 22 mm ahead of the tail, so keep that gap.</span></li>
           <li class="ok"><strong>CG target: 70–84 mm behind the leading edge</strong>
@@ -212,11 +218,12 @@ p.small { font-size:13.5px; color:var(--fg2) }
             <tr><td>Wall thickness</td><td class="n">25</td><td class="n">10</td><td class="src">You</td></tr>
             <tr><td>Wingspan</td><td class="n">1410</td><td class="n">1400</td><td class="src">You</td></tr>
             <tr><td>Wing spars</td><td class="n">150 stubs</td><td class="n">4 pieces, 695 each</td><td class="src">You</td></tr>
-            <tr><td>Wing mount</td><td class="n">—</td><td class="n">bolt-on, roof</td><td class="src">Your holder</td></tr>
-            <tr><td>Boom length</td><td class="n">400</td><td class="n">640</td><td class="src">Follows tail</td></tr>
+            <tr><td>Wing mount</td><td class="n">—</td><td class="n">attach body + holder + anchor, 4 × M4</td><td class="src">Your V3 CAD</td></tr>
+            <tr><td>Boom length</td><td class="n">400</td><td class="n">675</td><td class="src">Follows tail and spar</td></tr>
+            <tr><td>Main spar position</td><td class="n">78 (28%)</td><td class="n">45 (16%)</td><td class="src">Your V3 CAD</td></tr>
             <tr><td>Boom spacing</td><td class="n">234</td><td class="n">325</td><td class="src">You</td></tr>
             <tr><td>Prop centre height</td><td class="n">60 (guess)</td><td class="n">150, on spine fairing</td><td class="src">You</td></tr>
-            <tr><td>Wing retention</td><td class="n">bolts</td><td class="n">tubes + magnets</td><td class="src">You</td></tr>
+            <tr><td>Wing retention</td><td class="n">bolts</td><td class="n">tubes + 60 × 10 × 3 magnets</td><td class="src">You</td></tr>
             <tr><td>Tail chord</td><td class="n">120</td><td class="n">160</td><td class="src">You</td></tr>
             <tr><td>Elevator</td><td class="n">full 500</td><td class="n">309, between fins</td><td class="src">You</td></tr>
             <tr><td>Overall length</td><td class="n">1050</td><td class="n">920</td><td class="src">Follows</td></tr>
@@ -228,7 +235,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
 
       <div class="card">
         <h2>Guessed for the drawing</h2>
-        <p class="small">Nothing in the blueprint or our notes fixes these yet, so they are placeholders: wing leading edge 210 mm from the nose, aileron 300 × 70, elevator 64 and rudder 35 deep, the shape of the spine fairing (starts 450 mm back, 40 wide, 2.4 mm flange), the motor can and prop adapter lengths (check them against your motor), the 100 × 20 × 5 root plates and the layout of the magnet bars, the hatch outline, the tube-socket block on top of your holder plate (your file has only the two plates), and where each electronics box sits.</p>
+        <p class="small">Nothing in the blueprint or our notes fixes these yet, so they are placeholders: wing leading edge 210 mm from the nose, aileron 300 × 70, elevator 64 and rudder 35 deep, the shape of the spine fairing (starts 450 mm back, 40 wide, 2.4 mm flange), the motor can and prop adapter lengths (check them against your motor), the 96 × 20 × 5 root plates in the wings, the hatch outline, and where each electronics box sits. The wing attach body, holder and anchor now come from your V3 CAD file.</p>
       </div>
     </aside>
   </div>
@@ -276,9 +283,9 @@ p.small { font-size:13.5px; color:var(--fg2) }
   var P = {
     fuseL: 700, fuseW: 140, fuseH: 120, wall: 10, noseL: 90,
     chord: 280, panel: 630, wingLE: 210, wingY: 140,
-    sparMain: 0.28, sparRear: 0.68,
+    sparMain: 0.1607, sparRear: 0.68,
     ailSpan: 300, ailInset: 30, ailFrac: 0.75,
-    boomX0: 280, boomL: 640, boomSpacing: 325, boomY: 120,
+    boomX0: 245, boomL: 675, boomSpacing: 325, boomY: 120,
     htChord: 160, htSpan: 500, elevFrac: 0.6,
     finChord: 100, finH: 120, rudFrac: 0.65,
     propD: 254, motorY: 150,
@@ -290,7 +297,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
   var finLE = boomEnd - P.finChord, finY0 = P.boomY + 5;
   var propX = P.fuseL + 38;
   var elevHalf = boomZ - 8; /* elevator stops short of each fin */
-  var holderX = P.wingLE + (P.sparMain + P.sparRear) / 2 * P.chord; /* centre of the holder plates */
+  var holderX = P.wingLE + 137.4; /* centre of the V3 holder plates: they run from 24.6 mm ahead of the leading edge to 299.4 behind it */
 
   /* ---------- NACA 4-digit ---------- */
   function nacaAt(code, x) {
@@ -411,8 +418,8 @@ p.small { font-size:13.5px; color:var(--fg2) }
     add(extrude(n, P.fuseW), M.foam, 0, 0, -half);
     box(10, P.fuseH, P.fuseW, M.printed, P.fuseL - 5, P.fuseH / 2, 0);
     var hatch = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(60, P.fuseH + 0.5, -55), new THREE.Vector3(200, P.fuseH + 0.5, -55),
-      new THREE.Vector3(200, P.fuseH + 0.5, 55), new THREE.Vector3(60, P.fuseH + 0.5, 55)]), M.edge);
+      new THREE.Vector3(60, P.fuseH + 0.5, -55), new THREE.Vector3(180, P.fuseH + 0.5, -55),
+      new THREE.Vector3(180, P.fuseH + 0.5, 55), new THREE.Vector3(60, P.fuseH + 0.5, 55)]), M.edge);
     plane.add(hatch);
   })();
 
@@ -424,28 +431,28 @@ p.small { font-size:13.5px; color:var(--fg2) }
       function seg(shape, z0, z1, mat) { add(extrude(shape, z1 - z0), mat, P.wingLE, P.wingY, s > 0 ? z0 : -z1); }
       seg(full, half, a0, M.foam); seg(front, a0, a1, M.foam); seg(ail, a0, a1, M.ctrl); seg(full, a1, tipZ, M.foam);
     });
-    box(163.4, 8, 140, M.printed, holderX, P.fuseH + 4, 0);             /* holder plate, from your file */
-    box(163.4, 28, 140, M.hold, holderX, P.fuseH + 8 + 14, 0);          /* tube-socket block: placeholder, not in your file */
-    box(163.5, 8, 140, M.printed, holderX, P.fuseH - P.wall - 4, 0);    /* backplate, from your file */
-    box(163.4, 28, P.stopT, M.printed, holderX, P.fuseH + 8 + 14, 0);   /* centre stopper, 10 mm, splits the sockets 65 + 65 */
+    box(324, 8, 140, M.printed, holderX, P.fuseH + 4, 0);               /* holder plate, V3 */
+    box(324, 8, 120, M.printed, holderX, P.fuseH - P.wall - 4, 0);      /* anchor plate inside the fuselage, V3 */
+    var ap = [[0.0,0.0],[-24.6,-12.0],[261.8,-12.0],[299.4,-12.0],[280.0,0.4],[265.9,3.2],[252.0,5.8],[224.0,10.5],[196.0,14.5],[168.0,17.8],[140.0,20.3],[112.0,21.8],[98.0,22.2],[84.0,22.1],[70.0,21.5],[56.0,20.3],[42.0,18.5],[28.0,15.8],[21.0,13.9],[14.0,11.6],[7.0,8.4],[3.5,6.0],[1.0,3.2],[0.2,1.6]];   /* wing attach body: outline from the V3 CAD file (x from the wing leading edge, y from the chord line) */
+    var as = new THREE.Shape();
+    ap.forEach(function (q, i) { var X = P.wingLE + q[0], Y = P.wingY + q[1]; if (i) as.lineTo(X, Y); else as.moveTo(X, Y); });
+    add(extrude(as, P.fuseW), M.hold, 0, 0, -half);                     /* translucent so the sockets' tubes show; 10 mm stopper inside */
   })();
 
   /* spars, booms, clamps */
-  var xMain = P.wingLE + P.sparMain * P.chord, xRear = P.wingLE + P.sparRear * P.chord;
-  var yMain = P.wingY + nacaAt('2412', P.sparMain).mid * P.chord, yRear = P.wingY + nacaAt('2412', P.sparRear).mid * P.chord;
+  var xMain = P.wingLE + 45, xRear = P.wingLE + P.sparRear * P.chord;      /* V3 sockets: Ø10 at 45 mm, Ø6 at 190 mm behind the leading edge */
+  var yMain = P.wingY + 0.35, yRear = P.wingY + 0.35;                       /* socket centres sit 0.35 mm above the chord line */
   [1, -1].forEach(function (s) {
     tubeZ(5, tipZ - P.stopT / 2, M.cf, xMain, yMain, s * (tipZ + P.stopT / 2) / 2);   /* main spar, 695 */
     tubeZ(3, tipZ - P.stopT / 2, M.cf, xRear, yRear, s * (tipZ + P.stopT / 2) / 2);   /* rear spar, 695 */
   });
 
-  /* magnet joint: root plate recessed into each wing, two bars per face in the plate and two in the holder block */
-  var yMag = (yMain + yRear) / 2;
+  /* magnet joint (V3): 60 × 10 × 3 mm bar in a slot 3.08 deep in each side face of the wing attach body, and one in a 5 mm root plate in the wing */
+  var yMag = P.wingY, xMag = P.wingLE + 100;
   [1, -1].forEach(function (s) {
-    box(100, 20, 5, M.printed, holderX, yMag, s * (half + 2.5));                     /* root plate, in a recess in the foam */
-    [-1, 1].forEach(function (k) {
-      box(25.4, 12.7, 3.2, M.mag, holderX + k * 13.2, yMag, s * (half + 1.6));       /* wing-side bar */
-      box(25.4, 12.7, 3.2, M.mag, holderX + k * 13.2, yMag, s * (half - 1.6));       /* block-side bar */
-    });
+    box(96, 20, 5, M.printed, xMag, yMag, s * (half + 2.5));            /* root plate, in a recess in the foam */
+    box(60, 10, 3, M.mag, xMag, yMag, s * (half + 1.5));                /* wing-side bar */
+    box(60, 10, 3, M.mag, xMag, yMag, s * (half - 1.5));                /* block-side bar */
   });
   [1, -1].forEach(function (s) {
     tubeX(5, P.boomL, M.cf, P.boomX0 + P.boomL / 2, P.boomY, s * boomZ);
@@ -555,16 +562,16 @@ p.small { font-size:13.5px; color:var(--fg2) }
   [
     [V(xMain, yMain, -360), 'Main spar · Ø10 CF tube, 2 × 695'],
     [V(xRear, yRear, -300), 'Rear spar · Ø6 CF rod, 2 × 695'],
-    [V(holderX, P.fuseH + 4, -70), 'Holder plate · 163 × 140 × 8'],
-    [V(holderX, P.fuseH + 22, 0), 'Socket block (placeholder, not in your file)'],
-    [V(holderX + 60, P.fuseH + 36, 0), 'Centre stopper · 10 thick, sockets 65 deep'],
-    [V(holderX, P.fuseH - P.wall - 4, 70), 'Backplate · 163 × 140 × 8'],
+    [V(holderX, P.fuseH + 4, -70), 'Holder plate · 324 × 140 × 8'],
+    [V(holderX - 30, P.wingY + 16, 0), 'Wing attach body · 324 × 140 × 34, solid in the CAD'],
+    [V(holderX + 60, P.wingY + 8, 0), 'Centre stopper · 10 thick, sockets 65 deep'],
+    [V(holderX, P.fuseH - P.wall - 4, 70), 'Anchor plate · 324 × 120 × 8'],
     [V(620, P.boomY, -boomZ), 'Boom · Ø10 CF tube'],
     [V(P.fuseL + 22, P.motorY, 0), 'X2212 motor · 10×4.7 pusher'],
     [V(propX, P.motorY + 14, 0), 'Prop adapter'],
     [V(570, P.fuseH + 20, 0), 'Printed spine fairing · 250 long, 40 wide, 2.4 mm base flange'],
-    [V(holderX, yMag - 16, half + 2.5), 'Root plate · 100 × 20 × 5, in the foam'],
-    [V(holderX, yMag + 16, half - 2), 'Magnet bars · 2 per face, 4 per wing joint (X-ray foam)'],
+    [V(xMag, yMag - 16, half + 2.5), 'Root plate · 96 × 20 × 5, in the foam'],
+    [V(xMag, yMag + 16, half - 2), 'Magnet bars · 60 × 10 × 3, one each side (X-ray foam)'],
     [V(140, 45, 0), 'Battery · 4S 5200'],
     [V(300, 25, 0), 'Flight controller'],
     [V(180, P.fuseH - 14, 0), 'GPS'],
@@ -574,7 +581,7 @@ p.small { font-size:13.5px; color:var(--fg2) }
     [V(805, P.boomY - 14, boomZ - 11), 'Elevator servo (one at each end)'],
     [V(850, P.boomY - 14, -(boomZ + 11)), 'Rudder servo'],
     [V(boomEnd - 30, htY, 0), 'Elevator, between the fins'],
-    [V(130, P.fuseH, 0), 'Hatch'],
+    [V(120, P.fuseH, 0), 'Hatch'],
     [V(TE - 30, P.wingY + 10, -(tipZ - P.ailInset - P.ailSpan / 2)), 'Aileron (flaperon)']
   ].forEach(function (p) { label('part', 'names', p[0], function () { return p[1]; }); });
   var cgLabel = label('sec', 'cg', V(P.wingLE + 0.275 * P.chord, P.wingY + 26, 150), function () { return 'CG ' + u(0.25 * P.chord) + '–' + u(0.30 * P.chord) + ' behind LE'; });

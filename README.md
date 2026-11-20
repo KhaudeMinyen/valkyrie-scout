@@ -3,7 +3,7 @@ An SAR fixed wing drone. Designed to be open-source, cheap, and reliable.
 
 A twin-boom pusher fixed-wing for search and rescue, built from XPS foam, carbon tube and printed PETG-CF, and flown with ArduPlane. This README is a plain-text summary so the design can be read at a glance on GitHub. The interactive 3D model and the full bill of materials live in the HTML files listed at the bottom: download one and open it in a browser.
 
-*Design revision 1.8 (3D model) · BOM revision 1.97 · November 2026*
+*Design revision 1.9 (3D model) · BOM revision 1.98 · November 2026*
 
 ## At a glance
 
@@ -14,7 +14,7 @@ A twin-boom pusher fixed-wing for search and rescue, built from XPS foam, carbon
 | Wing | NACA 2412, 280 mm chord, 0.39 m², aspect ratio 5.0 |
 | Wing loading | about 34 g/dm² at 1.35 kg |
 | Fuselage | 700 × 140 × 120 mm, 10 mm XPS walls (120 mm wide inside) |
-| Booms | Ø10 mm CF tube, 640 mm long, 325 mm apart |
+| Booms | Ø10 mm CF tube, 675 mm long, 325 mm apart |
 | Tail | NACA 0012, 160 mm chord × 500 mm span, tail volume 0.38 |
 | Elevator | one 309 × 64 mm panel between the fins |
 | Fins | NACA 0009, 100 × 120 mm, rudders 35 mm deep |
@@ -33,7 +33,7 @@ Top view, nose up. `#` marks the booms and the spine fairing; the wing is the wi
                                 |     |
                                 |     |
 +-------------------------------+-----+-------------------------------+
-|                               |     |                               |
+|                          #    |     |    #                          |
 |                          #    |     |    #                          |
 |                          #    |     |    #                          |
 |                          #    |     |    #                          |
@@ -60,7 +60,7 @@ Side view, nose left. The prop is the vertical bar behind the motor `M`.
                                      |      ||
                                 #### |      ||
           ===============###########M|------||-
-.-------------=======================|=========
+.-----------=========================|=========
 |                                  | |
 |                                  | |
 '----------------------------------+
@@ -69,9 +69,9 @@ Side view, nose left. The prop is the vertical bar behind the motor `M`.
 ## How it goes together
 
 - **Wing:** two separate 630 mm XPS foam panels, joined at the fuselage. Ailerons are 300 × 70 mm. The wing leading edge sits 210 mm back from the nose.
-- **Spars:** four carbon pieces cut from 1 m stock, 695 mm each. Per wing, one Ø10 tube at 28% chord and one Ø6 rod at 68% chord. Each runs 630 mm in the wing and 65 mm into the holder, and is glued into its wing. A 10 mm stopper in the middle of the holder splits the two sockets 65 mm + 65 mm.
-- **Wing mount:** a printed holder on the fuselage roof: wing attachment plate, fuselage roof and backplate, bolted through with M4 heat-set inserts.
-- **Wing retention (planned):** magnets. Each wing root has a 100 × 20 × 5 mm printed plate recessed into the foam with two bars, and the holder block has two matching bars on each side face. The tubes carry the lift and the magnets only stop the wing sliding out.
+- **Spars:** four carbon pieces cut from 1 m stock, 695 mm each. Per wing, one Ø10 tube 45 mm behind the leading edge (16% chord) and one Ø6 rod 190 mm behind it (68% chord). Each runs 630 mm in the wing and 65 mm into the wing attach body, and is glued into its wing. A 10 mm stopper in the middle of the body splits the two sockets 65 mm + 65 mm.
+- **Wing mount (V3 CAD):** three printed parts. The wing attach body (324 × 140 × 34 mm, airfoil-shaped top) sits on the fuselage roof and holds the spar sockets. The holder plate (324 × 140 × 8 mm) goes under it, and the anchor plate (324 × 120 × 8 mm) goes inside the fuselage under the roof. Four M4 × 30 bolts (250 × 100 mm apart) go through all of them into heat-set inserts in the anchor.
+- **Wing retention (planned):** magnets. Each side face of the wing attach body has a 60 × 10 × 3.08 mm slot with one bar in it, and each wing root has a 96 × 20 × 5 mm printed plate recessed into the foam with one matching bar. The tubes carry the lift and the magnets only stop the wing sliding out.
 - **Motor:** mounted on a printed spine fairing epoxied to the fuselage roof. The spine starts 450 mm behind the nose, is 40 mm wide with a 2.4 mm base flange, and rises about 50 mm to the motor mount plate at the end of the fuselage.
 - **Tail:** twin Ø10 CF booms, one elevator panel between the fins with a servo at each end, rudder servos outboard of the booms.
 - **Electronics:** 4S 5200 mAh battery forward, flight controller aft of it, GPS under the roof hatch, ESC near the rear. Placement is illustrative until the first balance check.
@@ -79,15 +79,18 @@ Side view, nose left. The prop is the vertical bar behind the motor `M`.
 
 ## Open issues
 
-- The wing holder file (`parts/WingFuselageV2-Holder.3mf`) has no tube sockets: both plates are 163 × 140 × 8 mm with two Ø5.5 holes each, both on one side and 11 mm from a tube axis. The sockets need a block on top of the plate, about 28 mm tall.
-- The backplate is 140 mm wide and the fuselage is only 120 mm wide inside. Trim it to about 118 mm or notch the walls.
-- The magnet joint is untested. Measure the pull on a luggage scale (aim for at least 2 kg per wing) and keep the compass at least 15 cm from the nearest magnet. Use a high-temperature grade (N42SH) if the plane will sit in a hot car.
+- The three V3 printed parts are solid in the CAD: about 1085, 362 and 310 cm³. By a rough estimate that is 0.9 to 1 kg at 15% infill, against a planned 1.35 kg for the whole plane and a BOM budget of about 250 g of PETG-CF. Slice them for the real weight, then hollow the wing attach body and lighten the plates.
+- Holes in the CAD have almost no clearance: sockets Ø10.04 and Ø6.04 (use about Ø10.25 and Ø6.25), bolt holes Ø4.0 (use about 4.4), magnet slot 60.0 × 10.0 × 3.08 (use about 60.3 × 10.3 × 3.2).
+- The anchor is 120 mm wide and the fuselage is 120 mm wide inside. Make it about 118 mm.
+- Moving the main spar to 16% chord moved the front boom node with it, so the booms now start at 245 mm and are 675 mm long (they were 280 and 640). Confirm this is what you want.
+- The holder and anchor plates cover the roof from 185 to 509 mm behind the nose, so the battery hatch in the drawing now ends at 180 mm. Decide where the battery is loaded from.
+- The magnet joint is untested. Measure the pull on a luggage scale (aim for at least 2 kg per wing) and keep the compass at least 15 cm from the nearest magnet. The 60 × 10 × 3 mm bars on the BOM are standard N35, which weakens above about 80 °C, so keep the plane out of hot cars or choose a high-temperature grade.
 - In the 3D model the battery (138 mm long) overlaps the solid 90 mm nose block by about 19 mm. Slide the battery back or hollow the nose.
 - Placeholders in the drawing: aileron, elevator and rudder sizes, the hatch outline, the spine shape, motor can and prop adapter lengths, and the electronics positions.
 
 ## Bill of materials, phase 1 (flight-ready fixed wing)
 
-**Grand total: $829.** Prices are the unit prices in `bom/fw-bom.html` and are estimates.
+**Grand total: $816.** Prices are the unit prices in `bom/fw-bom.html` and are estimates.
 
 **Airframe** — $175
 
@@ -137,7 +140,7 @@ Side view, nose left. The prop is the vertical bar behind the motor `M`.
 |---|---|---|---|---|
 | ~250 g | Polymaker PETG-CF Filament (1 kg spool) | $30/kg | $8 | Polymaker |
 
-**Hardware** — $98
+**Hardware** — $85
 
 | Qty | Part | Unit | Ext | Source |
 |---|---|---|---|---|
@@ -151,7 +154,7 @@ Side view, nose left. The prop is the vertical bar behind the motor `M`.
 | 1 pack | Servo Horn / Arm Variety Pack (25-tooth) | $4 | $4 | Amazon |
 | 1 | Magnetic Prop Balancer | $8 | $8 | Amazon |
 | 1 | Battery Voltage Alarm (LiPo Buzzer) | $3 | $3 | Amazon |
-| 8 | Neodymium Block Magnet 1 × ½ × ⅛ in, N42SH (K&J BX082SH) | $4.10 | $33 | K&J Magnetics |
+| 1 pack | LOVIMAG Neodymium Bar Magnets 60 × 10 × 3 mm, 24-pack | $19.98 | $20 | Amazon |
 | 1 bag | M2 / M4 Heat-Set Inserts + Hex Screws Assortment | $10 | $10 | Amazon |
 
 Notes:
@@ -169,7 +172,7 @@ Phase 2, a QuadPlane VTOL add-on, would add about $165 (four lift motors and ESC
 
 - The iSDT Q6 Retro charger ($35) comes from earlier research and has not been rechecked.
 - The M2/M4 heat-set insert and hex screw assortment ($10) is an estimate.
-- The magnet bars ($4.10 each) and the epoxy ($8.49) were checked on the K&J Magnetics and Tractor Supply sites; stock was not confirmed.
+- The magnet pack ($19.98 for 24 bars) is from your Amazon screenshot of the LOVIMAG 24-pack, and the epoxy ($8.49) was checked on the Tractor Supply site; stock was not confirmed.
 
 ## Files
 
@@ -178,5 +181,6 @@ Phase 2, a QuadPlane VTOL add-on, would add about $165 (four lift motors and ESC
 | `3d-model/sar-3d.html` | Interactive 3D model with toggleable dimensions (download and open in a browser) |
 | `bom/fw-bom.html` | Full BOM with notes and a category filter |
 | `blueprint/blueprint.html` | Original 2D blueprint, Rev 1.1 (out of date; the 3D model is current) |
-| `parts/WingFuselageV2-Holder.3mf` | Wing holder plates |
+| `parts/WingFuselageV3.FCStd` | Wing attach body, holder and anchor, FreeCAD file (V3, current) |
+| `parts/WingFuselageV2-Holder.3mf` | Wing holder plates (V2, superseded) |
 | `printing/dry_filament_8h.gcode` | Dries filament on the AnkerMake M5 bed for 8 hours |
