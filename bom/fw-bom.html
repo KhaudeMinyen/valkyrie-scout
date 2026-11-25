@@ -395,7 +395,7 @@ td.source a:hover { text-decoration: underline; }
       <div class="proj-label">Open-Source SAR Platform</div>
       <div class="proj-title">DIY XPS Twin-Boom Fixed-Wing</div>
     </div>
-    <div class="rev-badge">Rev 1.98 · Nov 2026</div>
+    <div class="rev-badge">Rev 1.99 · Nov 2026</div>
   </div>
   <div class="header-meta">Bill of Materials — ArduPlane · Matek H743-SLIM · PETG-CF Structural Nodes · XPS/Oracover Airframe</div>
 </div>
@@ -757,15 +757,15 @@ td.source a:hover { text-decoration: underline; }
   </tr>
 
   <!-- ═══════ PRINTED PARTS ═══════ -->
-  <tr data-cat="prt" data-ext="8">
-    <td class="qty">~250 g</td>
+  <tr data-cat="prt" data-ext="20">
+    <td class="qty">~650 g</td>
     <td class="part-name">
       <span class="cat-tag prt">Printed</span><br>
       Polymaker PETG-CF Filament (1 kg spool)
-      <small>Carbon-fibre filled PETG · 4–6 GPa stiffness · needs a hardened steel nozzle (0.6 mm used here) and an all-metal hotend · all structural nodes</small>
+      <small>Carbon-fibre filled PETG · 4–6 GPa stiffness · needs a hardened steel nozzle (0.6 mm used here) and an all-metal hotend · all structural nodes · 650 g is an estimate from your 490 g slice of the attach body plus the anchor; it was 250 g before V4</small>
     </td>
     <td class="unit-price right">$30/kg</td>
-    <td class="ext-price right">$8</td>
+    <td class="ext-price right">$20</td>
     <td class="source"><a href="https://www.polymaker.com" target="_blank">Polymaker</a></td>
   </tr>
 
@@ -907,7 +907,7 @@ td.source a:hover { text-decoration: underline; }
     <td class="part-name">
       <span class="cat-tag hdw">Hardware</span><br>
       M2 / M4 Heat-Set Inserts + Hex Screws Assortment
-      <small>M4 × 30 for the four wing attach bolts (through the attach body, holder, roof and anchor), M2 for small parts · price is an estimate, check before ordering</small>
+      <small>M4 × 20 for the four wing attach bolts (through the 5 mm attach base and the 10 mm foam roof into inserts in the 8 mm anchor), M2 for small parts · price is an estimate, check before ordering</small>
     </td>
     <td class="unit-price right">$10</td>
     <td class="ext-price right">$10</td>
@@ -945,11 +945,11 @@ td.source a:hover { text-decoration: underline; }
     <li><strong>Charger optional</strong> — you may already own one. Remove $35 from total if so.</li>
     <li><strong>Camera optional</strong> — RunCam Thumb is listed for SAR utility. Remove $55 for a basic trainer build.</li>
     <li><strong>FC price</strong> — Matek H743-SLIM V3 is ~$52 on rcdrone.top; listed as sold-out on Pyrodrone at $129, so shop around or use rcdrone.top.</li>
-    <li><strong>Wing spars</strong> — full-span design: 10 mm main spar 45 mm behind the leading edge handles bending, 6 mm anti-rotation rod 190 mm behind it prevents the wing from pivoting. Both run root-to-tip (695 mm) and seat about 65 mm into the printed wing attach body on the fuselage roof, which has a 10 mm centre stopper between the two sockets.</li>
+    <li><strong>Wing spars</strong> — full-span design: 10 mm main spar 45 mm behind the leading edge handles bending, 6 mm anti-rotation rod 190 mm behind it prevents the wing from pivoting. Both run root-to-tip (695 mm) and seat about 65 mm into the printed wing attach body on the fuselage roof, which has a 10 mm centre stopper between the two sockets. The V4 sockets are 65.1 mm deep, so cut the spars at 693 mm or deepen the sockets to about 67 mm.</li>
     <li><strong>Printer requirements (not in the total)</strong> — PETG-CF needs a hardened steel nozzle and an all-metal hotend. On an AnkerMake M5 that means the all-metal hotend set plus a 0.6 mm hardened steel nozzle; skip them if your printer already has both.</li>
-    <li><strong>Wing joint</strong> — the tubes carry the lift; magnets only stop the wing sliding out. The printed parts are solid in the V3 CAD (about 0.9–1 kg at 15% infill by my rough estimate), so the 250 g PETG-CF budget below is probably too low until they are hollowed.</li>
+    <li><strong>Wing joint</strong> — the tubes carry the lift; magnets only stop the wing sliding out. The wing attach body now has a truss, but your slice of its two halves came to 275 g + 215 g (Generic PETG), and the anchor is still to add, so the 250 g PETG-CF budget below is too low. Plan on 650 g or more until the parts are lighter, and check the price of the extra filament.</li>
     <li><strong>Hot-wire bow</strong> — can be built free from scrap wood + nichrome wire. Remove from BOM if you have materials.</li>
-    <li><strong>PETG-CF spool cost</strong> — pro-rated from $30/kg; structural nodes + motor mount print in ~250 g.</li>
+    <li><strong>PETG-CF spool cost</strong> — pro-rated from $30/kg for about 650 g (was 250 g before V4), about $20. It still fits one 1 kg spool.</li>
     <li><strong>ArduPlane free</strong> — open-source firmware, $0. Mission Planner GCS also free.</li>
     <li><strong>Eagle Scout pitch</strong> — this BOM is fundable via Rotary Club (~$500 grants), AMA Foundation or Home Depot Foundation. Donor: Central Florida county emergency management or search-and-rescue team.</li>
   </ul>
